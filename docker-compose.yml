@@ -1,0 +1,45 @@
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: blueteam-backend
+    ports:
+      - "3001:3000"
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+      - blueteam-data:/app/database
+    environment:
+      - PORT=3000
+      - JWT_SECRET=blueteam_ctf_secret_key_change_in_production
+      - NODE_ENV=development
+      - DB_PATH=/app/database/blueteam.db
+    command: sh -c "node src/initDatabase.js && sleep 1 && node src/seedTestData.js && sleep 1 && npm start"
+    restart: unless-stopped
+    networks:
+      - blueteam-network
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: blueteam-frontend
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    depends_on:
+      - backend
+    restart: unless-stopped
+    networks:
+      - blueteam-network
+
+volumes:
+  blueteam-data:
+    driver: local
+
+networks:
+  blueteam-network:
+    driver: bridge

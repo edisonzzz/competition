@@ -1,0 +1,28 @@
+# Node modules
+node_modules/
+npm-debug.log*
+
+# Environment
+.env.local
+.env.*.local
+
+# Database (保留在volume中)
+*.db
+*.db-journal
+
+# Logs
+logs/
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Lock files (让Docker重新生成)
+package-lock.json

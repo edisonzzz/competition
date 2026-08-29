@@ -1,0 +1,111 @@
+#!/bin/bash
+
+echo "==================================="
+echo "ANSEN 平台 - 完整部署指南"
+echo "==================================="
+echo ""
+
+cat << 'EOF'
+
+📦 部署步骤：
+
+1️⃣ 上传项目到服务器
+   在本地执行：
+   scp -r blueteamctf-cn root@116.62.236.60:/root/
+
+2️⃣ 连接到服务器
+   ssh root@116.62.236.60
+
+3️⃣ 进入项目目录
+   cd /root/blueteamctf-cn
+
+4️⃣ 执行部署脚本
+   chmod +x deploy-cn.sh
+   ./deploy-cn.sh
+
+5️⃣ 访问系统
+   http://116.62.236.60:5173
+
+---
+
+🔧 手动部署（如果脚本失败）：
+
+# 1. 安装Docker
+curl -fsSL https://get.docker.com | bash -s docker --mirror Aliyun
+systemctl start docker
+systemctl enable docker
+
+# 2. 安装Docker Compose
+curl -L "https://get.daocloud.io/docker/compose/releases/download/v2.20.0/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+chmod +x /usr/local/bin/docker-compose
+
+# 3. 配置Docker镜像加速
+mkdir -p /etc/docker
+cat > /etc/docker/daemon.json <<JSON
+{
+  "registry-mirrors": [
+    "https://docker.mirrors.ustc.edu.cn",
+    "https://hub-mirror.c.163.com"
+  ]
+}
+JSON
+systemctl restart docker
+
+# 4. 启动服务
+cd /root/blueteamctf-cn
+docker compose up -d --build
+
+# 5. 查看日志
+docker compose logs -f
+
+---
+
+🛠️ 常用命令：
+
+# 查看服务状态
+docker compose ps
+
+# 查看日志
+docker compose logs -f
+
+# 重启服务
+docker compose restart
+
+# 停止服务
+docker compose down
+
+# 完全清理重新开始
+docker compose down -v
+docker system prune -af
+docker compose up -d --build
+
+---
+
+🔥 防火墙配置：
+
+# 开放端口（如果有防火墙）
+firewall-cmd --permanent --add-port=5173/tcp
+firewall-cmd --permanent --add-port=3001/tcp
+firewall-cmd --reload
+
+# 或使用iptables
+iptables -A INPUT -p tcp --dport 5173 -j ACCEPT
+iptables -A INPUT -p tcp --dport 3001 -j ACCEPT
+
+---
+
+⚠️ 故障排查：
+
+1. 如果前端无法访问：
+   - 检查防火墙: systemctl status firewalld
+   - 检查端口: netstat -tlnp | grep 5173
+
+2. 如果Docker构建慢：
+   - 确认镜像加速已配置
+   - 查看 /etc/docker/daemon.json
+
+3. 如果容器无法启动：
+   - 查看日志: docker compose logs
+   - 检查端口占用: lsof -i :5173
+
+EOF
