@@ -1,114 +1,114 @@
-# 🛡️ 蓝队CTF竞赛平台
+# 🛡️ CTF Competition Platform
 
-一个专注于蓝队防御技能的CTF竞赛平台Demo。
+A CTF competition platform demo focused on blue team defense skills.
 
-## 🚀 快速启动
+## 🚀 Quick Start
 
-### 方式1：Docker启动（推荐，支持快速清理）
+### Method 1: Docker (Recommended)
 
 ```bash
-# 一键启动
+# One-click start
 ./docker-start.sh
 
-# 访问平台
+# Access the platform
 http://localhost:5173
 ```
 
-**清理数据：**
+**Clean data:**
 ```bash
-# 完全清理（包括数据库）
+# Full cleanup (including database)
 ./docker-clean.sh
 
-# 或使用Docker命令
+# Or use Docker commands
 docker compose down -v
 ```
 
-### 方式2：本地启动
+### Method 2: Local Start
 
 ```bash
-# 终端1 - 启动后端
+# Terminal 1 - Start backend
 cd backend && npm run dev
 
-# 终端2 - 启动前端
+# Terminal 2 - Start frontend
 cd frontend && npm run dev
 
-# 访问: http://localhost:5173
+# Access: http://localhost:5173
 ```
 
-## 📖 详细文档
+## 📖 Documentation
 
-- **[DOCKER.md](DOCKER.md)** - Docker使用指南（推荐）
-- **[START.md](START.md)** - 本地启动指南
-- **[SETUP.md](SETUP.md)** - 详细安装步骤
-- **[PROJECT_SUMMARY.md](PROJECT_SUMMARY.md)** - 完整项目说明
+- **[DOCKER.md](DOCKER.md)** - Docker usage guide (recommended)
+- **[START.md](START.md)** - Local start guide
+- **[SETUP.md](SETUP.md)** - Detailed setup instructions
+- **[PROJECT_SUMMARY.md](PROJECT_SUMMARY.md)** - Full project description
 
-## 🔐 测试账号
+## 🔐 Test Accounts
 
-- **裁判**: `judge` / `judge123`
-- **队员**: `team1` / `team123`
+- **Judge**: `judge` / `judge123`
+- **Player**: `team1` / `team123`
 
-## ✨ 功能特性
+## ✨ Features
 
-- 🛡️ **蓝队导向**: 专注于防御、取证、应急响应等蓝队技能
-- 👥 **角色系统**: 支持队员和裁判两种角色
-- 📝 **多样题型**: 5道选择题 + 5道实操题（总分2300分）
-- 🏆 **实时排行榜**: 动态显示比赛成绩
-- ⚡ **即时评分**: 自动评分系统
-- 🐳 **Docker支持**: 一键启动，快速清理
+- 🛡️ **Blue Team Focus**: Defense, forensics, incident response skills
+- 👥 **Role System**: Player and Judge roles
+- 📝 **Diverse Challenges**: 5 multiple choice + 5 hands-on (2300 total points)
+- 🏆 **Real-time Leaderboard**: Dynamic score display
+- ⚡ **Instant Scoring**: Auto-grading system
+- 🐳 **Docker Support**: One-click start, quick cleanup
 
-## 📝 题目内容
+## 📝 Challenges
 
-### 选择题（5道，700分）
-- 基础防御知识（100分）
-- 日志分析（100分）
-- 网络安全（150分）
-- 应急响应（150分）
-- 威胁检测（200分）
+### Multiple Choice (5 questions, 700 points)
+- Basic Defense Knowledge (100 pts)
+- Log Analysis (100 pts)
+- Network Security (150 pts)
+- Incident Response (150 pts)
+- Threat Detection (200 pts)
 
-### 实操题（5道，1600分）
-- Linux进程取证（300分）
-- 日志分析实战（250分）
-- 命令识别（300分）
-- 端口分析（350分）
-- 文件取证（400分）
+### Hands-on Challenges (5 questions, 1600 points)
+- Linux Process Forensics (300 pts)
+- Log Analysis Practice (250 pts)
+- Command Recognition (300 pts)
+- Port Analysis (350 pts)
+- File Forensics (400 pts)
 
-## 🛠️ 技术栈
+## 🛠️ Tech Stack
 
-- **前端**: React + Vite + Tailwind CSS
-- **后端**: Node.js + Express
-- **数据库**: SQLite
-- **认证**: JWT
-- **容器**: Docker + Docker Compose
+- **Frontend**: React + Vite + Tailwind CSS
+- **Backend**: Node.js + Express
+- **Database**: SQLite
+- **Auth**: JWT
+- **Container**: Docker + Docker Compose
 
-## 🐳 Docker命令速查
+## 🐳 Docker Commands
 
 ```bash
-# 启动
+# Start
 docker compose up -d
 
-# 停止
+# Stop
 docker compose down
 
-# 清理数据
+# Clean data
 docker compose down -v
 
-# 查看日志
+# View logs
 docker compose logs -f
 
-# 重启
+# Restart
 docker compose restart
 ```
 
-## 📊 项目结构
+## 📊 Project Structure
 
 ```
 blueteamctf/
-├── backend/              # Node.js后端
-├── frontend/             # React前端
-├── docker-compose.yml    # Docker编排文件
-├── docker-start.sh       # 一键启动脚本
-├── docker-clean.sh       # 清理脚本
-└── DOCKER.md            # Docker文档
+├── backend/              # Node.js backend
+├── frontend/             # React frontend
+├── docker-compose.yml    # Docker compose file
+├── docker-start.sh       # One-click start script
+├── docker-clean.sh       # Cleanup script
+└── DOCKER.md            # Docker documentation
 ```
 
 ## License

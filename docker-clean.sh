@@ -1,26 +1,26 @@
 #!/bin/bash
 
-echo "🧹 清理蓝队CTF平台"
+echo "🧹 Cleaning CTF Platform"
 echo "================================"
 echo ""
 
-read -p "确定要清理所有数据吗？(y/N) " -n 1 -r
+read -p "Are you sure you want to clean all data? (y/N) " -n 1 -r
 echo ""
 
 if [[ $REPLY =~ ^[Yy]$ ]]; then
-    echo "🛑 停止服务..."
+    echo "Stopping services..."
     docker compose down
 
-    echo "🗑️  删除容器和数据卷..."
+    echo "Deleting containers and volumes..."
     docker compose down -v
 
-    echo "🧹 清理镜像..."
+    echo "Cleaning images..."
     docker rmi blueteamctf-backend blueteamctf-frontend 2>/dev/null || true
 
     echo ""
-    echo "✅ 清理完成！"
+    echo "Cleanup complete!"
     echo ""
-    echo "💡 下次启动时会重新构建并初始化数据库"
+    echo "Next startup will rebuild and initialize the database"
 else
-    echo "❌ 取消清理"
+    echo "Cleanup cancelled"
 fi

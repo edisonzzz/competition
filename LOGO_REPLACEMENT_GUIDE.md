@@ -1,80 +1,79 @@
-# 📝 Logo替换步骤
+# 📝 Logo Replacement Steps
 
-## 你的Logo说明
-- 图片格式：PNG（黑色背景，带图形Logo）
-- 尺寸：2001x2001px
+## Your Logo Details
+- Format: PNG (black background, with graphic logo)
+- Size: 2001x2001px
 
-## 替换步骤
+## Replacement Steps
 
-### 方法1：直接复制（推荐）
+### Method 1: Direct Copy (Recommended)
 
-1. **保存图片**
-   - 右键点击你在聊天中发送的Logo图片
-   - 选择"另存为"或"Save Image As"
-   - 保存为 `logo.png`
+1. **Save the image**
+   - Right-click the logo image you sent in the chat
+   - Select "Save Image As"
+   - Save as `logo.png`
 
-2. **复制到项目**
+2. **Copy to project**
    ```bash
-   # 在项目根目录执行
+   # Run in project root
    cp ~/Downloads/logo.png frontend/public/logo.png
    ```
 
-3. **刷新浏览器**
-   - 访问 http://localhost:5173
-   - 按 Cmd+Shift+R (Mac) 或 Ctrl+Shift+R (Windows) 强制刷新
+3. **Refresh browser**
+   - Visit http://localhost:5173
+   - Press Cmd+Shift+R (Mac) or Ctrl+Shift+R (Windows) to force refresh
 
-### 方法2：使用Docker复制
+### Method 2: Using Docker Copy
 
 ```bash
-# 将logo复制到容器中
+# Copy logo into container
 docker cp /path/to/your/logo.png blueteam-frontend:/app/public/logo.png
 
-# 重启前端服务
+# Restart frontend service
 docker compose restart frontend
 ```
 
-### 方法3：直接放置文件
+### Method 3: Direct File Placement
 
-1. 打开项目目录
+1. Open project directory
    ```bash
    cd /Users/rickbook2025/Documents/code/blueteamctf
    ```
 
-2. 将logo.png文件拖拽到 `frontend/public/` 文件夹
+2. Drag the logo.png file into the `frontend/public/` folder
 
-3. 确保文件名为 `logo.png`
+3. Ensure the file is named `logo.png`
 
-4. 刷新浏览器
+4. Refresh browser
 
-## 验证Logo
+## Verify Logo
 
-访问以下地址查看logo是否成功：
+Visit the following URL to check if the logo is working:
 - http://localhost:5173/logo.png
 
-如果能看到你的Logo图片，说明替换成功！
+If you can see your logo image, the replacement was successful!
 
-## 注意事项
+## Notes
 
-- **文件名必须是**: `logo.png` 或 `logo.svg`
-- **位置必须是**: `frontend/public/logo.png`
-- **建议尺寸**: 512x512px 或更大（当前2001x2001已足够）
-- **支持格式**: PNG (推荐透明背景), SVG, JPG
+- **Filename must be**: `logo.png` or `logo.svg`
+- **Location must be**: `frontend/public/logo.png`
+- **Recommended size**: 512x512px or larger (current 2001x2001 is sufficient)
+- **Supported formats**: PNG (transparent background recommended), SVG, JPG
 
-## 如果Logo背景是黑色
+## If Logo Has Black Background
 
-你的Logo看起来有黑色背景。有两个选择：
+Your logo appears to have a black background. Two options:
 
-1. **保持黑色背景**（直接使用）
-2. **去除背景**（使用图片编辑工具将黑色背景改为透明）
+1. **Keep black background** (use as-is)
+2. **Remove background** (use image editor to make black background transparent)
 
-推荐使用透明背景的PNG格式，在白色页面上显示效果更好。
+Transparent background PNG is recommended for better display on white pages.
 
-## 当前临时Logo位置
+## Current Temporary Logo Location
 
 ```
-frontend/public/logo.svg  ← 当前使用的临时SVG
-frontend/public/logo.png  ← 你需要替换的位置
+frontend/public/logo.svg  ← Current temporary SVG
+frontend/public/logo.png  ← Location you need to replace
 ```
 
-优先级：如果 logo.png 存在，页面会优先使用 PNG 格式。
-
+Priority: If logo.png exists, the page will use PNG format first.

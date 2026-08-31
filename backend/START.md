@@ -1,70 +1,70 @@
-# 🚀 启动蓝队CTF平台
+# 🚀 Start CTF Platform
 
-## 快速启动（3步）
+## Quick Start (3 Steps)
 
-### 1️⃣ 打开第一个终端 - 启动后端
+### 1️⃣ Open first terminal - Start backend
 ```bash
 cd backend
 npm run dev
 ```
-看到 "🛡️ 蓝队CTF平台后端启动成功" 即可
+Wait until you see "CTF Platform backend started"
 
-### 2️⃣ 打开第二个终端 - 启动前端
+### 2️⃣ Open second terminal - Start frontend
 ```bash
 cd frontend  
 npm run dev
 ```
-看到 "Local: http://localhost:5173/" 即可
+Wait until you see "Local: http://localhost:5173/"
 
-### 3️⃣ 打开浏览器
-访问: http://localhost:5173
+### 3️⃣ Open browser
+Visit: http://localhost:5173
 
-## 🔐 登录测试
+## 🔐 Login for Testing
 
-### 裁判登录
-- 用户名: `judge`
-- 密码: `judge123`
-- 可以查看所有提交、管理平台
+### Judge Login
+- Username: `judge`
+- Password: `judge123`
+- Can view all submissions and manage the platform
 
-### 队员登录
-- 用户名: `team1`
-- 密码: `team123`
-- 可以答题、查看排行榜
+### Player Login
+- Username: `team1`
+- Password: `team123`
+- Can answer challenges and view leaderboard
 
-## 📝 题目清单
+## 📝 Challenge List
 
-### 选择题（5道）
-✅ 基础防御知识 - 100分  
-✅ 日志分析 - 100分  
-✅ 网络安全 - 150分  
-✅ 应急响应 - 150分  
-✅ 威胁检测 - 200分  
+### Multiple Choice (5 questions)
+- Basic Defense Knowledge - 100 pts
+- Log Analysis - 100 pts
+- Network Security - 150 pts
+- Incident Response - 150 pts
+- Threat Detection - 200 pts
 
-### 实操题（5道）
-✅ Linux进程取证 - 300分  
-✅ 日志分析实战 - 250分  
-✅ 命令识别 - 300分  
-✅ 端口分析 - 350分  
-✅ 文件取证 - 400分  
+### Hands-on Challenges (5 questions)
+- Linux Process Forensics - 300 pts
+- Log Analysis Practice - 250 pts
+- Command Recognition - 300 pts
+- Port Analysis - 350 pts
+- File Forensics - 400 pts
 
-总分: 2300分
+Total: 2300 pts
 
-## 💡 使用建议
+## 💡 Tips
 
-1. **先用裁判账号登录** - 查看管理面板，了解整体情况
-2. **再用队员账号登录** - 体验答题流程
-3. **打开多个浏览器窗口** - 模拟多个队伍同时比赛
-4. **观察实时排行榜** - 答对题目后会自动更新排名
+1. **First login as Judge** - Check the admin panel to understand the system
+2. **Then login as Player** - Experience the challenge workflow
+3. **Open multiple browser windows** - Simulate multiple teams competing
+4. **Observe the real-time leaderboard** - Answers update rankings automatically
 
-## ⚠️ 注意事项
+## ⚠️ Notes
 
-- 后端运行在 3000 端口
-- 前端运行在 5173 端口
-- 两个服务都要启动才能正常使用
-- 答案不区分大小写，会自动去除首尾空格
-- 每道题只能答对一次，答错可以重试
+- Backend runs on port 3000
+- Frontend runs on port 5173
+- Both services must be running
+- Answers are case-insensitive, leading/trailing spaces are trimmed
+- Each challenge can only be answered correctly once, wrong attempts can be retried
 
-## 🔄 重置数据库（如需要）
+## 🔄 Reset Database (if needed)
 
 ```bash
 cd backend
@@ -72,4 +72,4 @@ rm database/blueteam.db
 node src/initDatabase.js
 ```
 
-祝比赛顺利！🎉
+Good luck! 🎉

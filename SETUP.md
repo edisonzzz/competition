@@ -1,6 +1,6 @@
-# 蓝队CTF平台快速启动指南
+# CTF Platform Quick Start Guide
 
-## 一键安装
+## One-click Install
 
 ### macOS/Linux
 ```bash
@@ -13,168 +13,168 @@ chmod +x setup.sh
 setup.bat
 ```
 
-## 手动启动
+## Manual Start
 
-### 1. 安装依赖并初始化数据库
+### 1. Install dependencies and initialize database
 
 ```bash
-# 后端
+# Backend
 cd backend
 npm install
 node src/initDatabase.js
 
-# 前端
+# Frontend
 cd ../frontend
 npm install
 ```
 
-### 2. 启动服务
+### 2. Start services
 
-**终端1 - 启动后端：**
+**Terminal 1 - Start backend:**
 ```bash
 cd backend
 npm run dev
 ```
-后端将运行在: http://localhost:3000
+Backend will run at: http://localhost:3000
 
-**终端2 - 启动前端：**
+**Terminal 2 - Start frontend:**
 ```bash
 cd frontend
 npm run dev
 ```
-前端将运行在: http://localhost:5173
+Frontend will run at: http://localhost:5173
 
-### 3. 访问平台
+### 3. Access platform
 
-打开浏览器访问: http://localhost:5173
+Open browser and visit: http://localhost:5173
 
-## 默认账号
+## Default Accounts
 
-### 裁判账号
-- 用户名: `judge`
-- 密码: `judge123`
-- 权限: 查看所有提交、统计数据、管理题目
+### Judge Account
+- Username: `judge`
+- Password: `judge123`
+- Permissions: View all submissions, statistics, manage challenges
 
-### 队员账号
-- 用户名: `team1`
-- 密码: `team123`
-- 队伍名: 蓝盾一队
+### Player Account
+- Username: `team1`
+- Password: `team123`
+- Team: Blue Shield 1
 
-### 队员账号2
-- 用户名: `team2`
-- 密码: `team123`
-- 队伍名: 蓝盾二队
+### Player Account 2
+- Username: `team2`
+- Password: `team123`
+- Team: Blue Shield 2
 
-## 功能说明
+## Features
 
-### 队员功能
-- ✅ 查看所有题目（5道选择题 + 5道实操题）
-- ✅ 提交答案并实时获得反馈
-- ✅ 查看个人得分和排名
-- ✅ 查看提交历史
-- ✅ 实时排行榜
+### Player Features
+- ✅ View all challenges (5 multiple choice + 5 hands-on)
+- ✅ Submit answers and get real-time feedback
+- ✅ View personal scores and rankings
+- ✅ View submission history
+- ✅ Real-time leaderboard
 
-### 裁判功能
-- ✅ 查看所有队伍提交记录
-- ✅ 查看平台统计数据
-- ✅ 实时监控比赛进度
-- ✅ 查看答案对比
+### Judge Features
+- ✅ View all team submissions
+- ✅ View platform statistics
+- ✅ Real-time competition monitoring
+- ✅ Answer comparison
 
-## 题目说明
+## Challenge Details
 
-### 选择题（5道）
-1. 基础防御知识 - Linux进程查看命令 (100分)
-2. 日志分析 - 用户登录日志位置 (100分)
-3. 网络安全 - iptables链知识 (150分)
-4. 应急响应 - 后门处理流程 (150分)
-5. 威胁检测 - 挖矿木马特征 (200分)
+### Multiple Choice (5 questions)
+1. Basic Defense Knowledge - Linux process commands (100 pts)
+2. Log Analysis - User login log location (100 pts)
+3. Network Security - iptables chain knowledge (150 pts)
+4. Incident Response - Backdoor handling (150 pts)
+5. Threat Detection - Cryptomining malware patterns (200 pts)
 
-### 实操题（5道）
-1. Linux进程取证 - 识别恶意进程类型 (300分)
-2. 日志分析实战 - 识别暴力破解攻击 (250分)
-3. 命令识别 - 分析攻击者持久化手法 (300分)
-4. 端口分析 - 识别反向Shell连接 (350分)
-5. 文件取证 - 识别SUID提权风险 (400分)
+### Hands-on Challenges (5 questions)
+1. Linux Process Forensics - Identify malicious process types (300 pts)
+2. Log Analysis Practice - Identify brute force attacks (250 pts)
+3. Command Recognition - Analyze attacker persistence (300 pts)
+4. Port Analysis - Identify reverse shell connections (350 pts)
+5. File Forensics - Identify SUID privilege escalation (400 pts)
 
-总分: 2300分
+Total: 2300 points
 
-## 技术栈
+## Tech Stack
 
-- **前端**: React 18 + Vite + Tailwind CSS
-- **后端**: Node.js + Express
-- **数据库**: SQLite (better-sqlite3)
-- **认证**: JWT
+- **Frontend**: React 18 + Vite + Tailwind CSS
+- **Backend**: Node.js + Express
+- **Database**: SQLite (better-sqlite3)
+- **Auth**: JWT
 
-## 项目结构
+## Project Structure
 
 ```
 blueteamctf/
-├── backend/              # 后端服务
+├── backend/              # Backend service
 │   ├── src/
-│   │   ├── server.js    # 入口文件
-│   │   ├── routes/      # 路由
-│   │   ├── middleware/  # 中间件
-│   │   └── models/      # 数据模型
-│   └── database/        # SQLite数据库
-├── frontend/            # 前端应用
+│   │   ├── server.js    # Entry point
+│   │   ├── routes/      # Routes
+│   │   ├── middleware/  # Middleware
+│   │   └── models/      # Data models
+│   └── database/        # SQLite database
+├── frontend/            # Frontend app
 │   ├── src/
-│   │   ├── pages/      # 页面组件
-│   │   ├── components/ # 公共组件
-│   │   └── services/   # API服务
+│   │   ├── pages/      # Page components
+│   │   ├── components/ # Shared components
+│   │   └── services/   # API services
 │   └── public/
 └── README.md
 ```
 
-## 常见问题
+## FAQ
 
-### 端口被占用
-如果3000或5173端口被占用，可以修改：
-- 后端: `backend/.env` 中的 `PORT=3000`
-- 前端: `frontend/vite.config.js` 中的 `port: 5173`
+### Port Conflict
+If port 3000 or 5173 is already in use, modify:
+- Backend: `PORT=3000` in `backend/.env`
+- Frontend: `port: 5173` in `frontend/vite.config.js`
 
-### 数据库重置
-删除 `backend/database/blueteam.db` 文件，然后重新运行：
+### Database Reset
+Delete `backend/database/blueteam.db` file, then re-run:
 ```bash
 cd backend
 node src/initDatabase.js
 ```
 
-### 清除浏览器缓存
-如果遇到登录问题，清除浏览器的localStorage：
+### Clear Browser Cache
+If experiencing login issues, clear localStorage:
 ```javascript
 localStorage.clear()
 ```
 
-## 开发说明
+## Development Notes
 
-### 添加新题目
-裁判登录后，在裁判管理页面可以添加新题目。
+### Adding New Challenges
+After judge login, new challenges can be added in the judge admin panel.
 
-或者修改 `backend/src/initDatabase.js` 中的题目数据，然后重置数据库。
+Or modify challenge data in `backend/src/initDatabase.js` and reset the database.
 
-### API接口文档
+### API Documentation
 
-#### 认证
-- POST `/api/auth/login` - 登录
-- POST `/api/auth/register` - 注册
-- GET `/api/auth/me` - 获取当前用户
+#### Auth
+- POST `/api/auth/login` - Login
+- POST `/api/auth/register` - Register
+- GET `/api/auth/me` - Get current user
 
-#### 题目
-- GET `/api/challenges` - 获取所有题目
-- GET `/api/challenges/:id` - 获取题目详情
+#### Challenges
+- GET `/api/challenges` - Get all challenges
+- GET `/api/challenges/:id` - Get challenge details
 
-#### 提交
-- POST `/api/submissions` - 提交答案
-- GET `/api/submissions/history` - 获取提交历史
+#### Submissions
+- POST `/api/submissions` - Submit answer
+- GET `/api/submissions/history` - Get submission history
 
-#### 排行榜
-- GET `/api/leaderboard` - 获取排行榜
-- GET `/api/leaderboard/stats` - 获取题目统计
+#### Leaderboard
+- GET `/api/leaderboard` - Get leaderboard
+- GET `/api/leaderboard/stats` - Get challenge statistics
 
-#### 裁判（需要裁判权限）
-- GET `/api/judge/submissions` - 获取所有提交
-- GET `/api/judge/statistics` - 获取平台统计
-- POST `/api/judge/challenges` - 添加新题目
+#### Judge (requires judge permission)
+- GET `/api/judge/submissions` - Get all submissions
+- GET `/api/judge/statistics` - Get platform statistics
+- POST `/api/judge/challenges` - Add new challenge
 
 ## License
 

@@ -1,91 +1,89 @@
-
 ╔══════════════════════════════════════════════════════════════╗
 ║                                                              ║
-║     🛡️  蓝队CTF竞赛平台 - 已完成！                            ║
+║     🛡️  CTF Competition Platform - Completed!                ║
 ║                                                              ║
 ╚══════════════════════════════════════════════════════════════╝
 
-📍 项目位置：
+📍 Project Location:
    /Users/rickbook2025/Documents/code/blueteamctf
 
-✅ 完成内容：
-   • 后端 API（Node.js + Express + SQLite）
-   • 前端应用（React + Vite + Tailwind CSS）
-   • 5道选择题 + 5道实操题（总分2300分）
-   • 用户认证系统（JWT）
-   • 实时排行榜
-   • 裁判管理面板
-   • 数据库已初始化完成
+✅ Completed:
+   • Backend API (Node.js + Express + SQLite)
+   • Frontend App (React + Vite + Tailwind CSS)
+   • 5 Multiple Choice + 5 Hands-on Challenges (2300 points total)
+   • User Authentication (JWT)
+   • Real-time Leaderboard
+   • Judge Admin Panel
+   • Database initialized
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-🚀 启动方法：
+🚀 How to Start:
 
-方法1：手动启动（推荐）
+Method 1: Manual Start (Recommended)
 
-   终端1 - 后端：
+   Terminal 1 - Backend:
    $ cd backend
    $ npm run dev
 
-   终端2 - 前端：
+   Terminal 2 - Frontend:
    $ cd frontend
    $ npm run dev
 
-   浏览器：http://localhost:5173
+   Browser: http://localhost:5173
 
-方法2：一键启动（macOS/Linux）
+Method 2: One-click Start (macOS/Linux)
 
    $ ./start-all.sh
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-🔐 测试账号：
+🔐 Test Accounts:
 
-   裁判：judge / judge123
-   队员：team1 / team123
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-📝 题目列表：
-
-选择题（5道，700分）：
-   ✓ 基础防御知识 - Linux进程命令 (100分)
-   ✓ 日志分析 - 登录日志位置 (100分)
-   ✓ 网络安全 - iptables知识 (150分)
-   ✓ 应急响应 - 后门处理 (150分)
-   ✓ 威胁检测 - 挖矿识别 (200分)
-
-实操题（5道，1600分）：
-   ✓ Linux进程取证 (300分)
-   ✓ 日志分析实战 (250分)
-   ✓ 命令识别 (300分)
-   ✓ 端口分析 (350分)
-   ✓ 文件取证 (400分)
+   Judge: judge / judge123
+   Player: team1 / team123
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-📚 文档说明：
+📝 Challenge List:
 
-   README.md          - 项目介绍
-   START.md           - 快速启动指南
-   SETUP.md           - 详细安装步骤
-   PROJECT_SUMMARY.md - 完整项目说明
-   LOGO.md            - Logo使用说明
+Multiple Choice (5 questions, 700 points):
+   ✓ Basic Defense Knowledge (100 pts)
+   ✓ Log Analysis (100 pts)
+   ✓ Network Security - iptables (150 pts)
+   ✓ Incident Response - Backdoor handling (150 pts)
+   ✓ Threat Detection - Cryptomining (200 pts)
+
+Hands-on Challenges (5 questions, 1600 points):
+   ✓ Linux Process Forensics (300 pts)
+   ✓ Log Analysis Practice (250 pts)
+   ✓ Command Recognition (300 pts)
+   ✓ Port Analysis (350 pts)
+   ✓ File Forensics (400 pts)
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-💡 提示：
+📚 Documentation:
 
-1. 你发送的盾牌Logo图片请手动保存到：
+   README.md          - Project introduction
+   START.md           - Quick start guide
+   SETUP.md           - Detailed installation
+   PROJECT_SUMMARY.md - Full project description
+   LOGO.md            - Logo usage
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+💡 Tips:
+
+1. Save your shield Logo image to:
    frontend/public/logo.png
 
-2. 我已创建了临时的SVG logo，可以先使用
+2. A temporary SVG logo has been created for initial use
 
-3. 所有依赖都已安装，数据库已初始化
+3. All dependencies installed, database initialized
 
-4. 直接启动即可使用！
+4. Start and use directly!
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-祝比赛成功！🎉
-
+Good luck with your competition! 🎉

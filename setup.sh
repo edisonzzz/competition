@@ -1,64 +1,64 @@
 #!/bin/bash
 
-echo "🛡️  蓝队CTF竞赛平台 - 启动脚本"
+echo "🛡️  CTF Competition Platform - Setup Script"
 echo "================================"
 echo ""
 
-# 检查Node.js是否安装
+# Check if Node.js is installed
 if ! command -v node &> /dev/null; then
-    echo "❌ 错误: 未检测到Node.js，请先安装Node.js"
+    echo "Error: Node.js not found, please install Node.js first"
     exit 1
 fi
 
-echo "✅ Node.js版本: $(node -v)"
-echo "✅ npm版本: $(npm -v)"
+echo "Node.js version: $(node -v)"
+echo "npm version: $(npm -v)"
 echo ""
 
-# 安装后端依赖
-echo "📦 安装后端依赖..."
+# Install backend dependencies
+echo "Installing backend dependencies..."
 cd backend
 if [ ! -d "node_modules" ]; then
     npm install
 else
-    echo "   后端依赖已安装，跳过"
+    echo "Backend dependencies already installed, skipping"
 fi
 
-# 初始化数据库
+# Initialize database
 echo ""
-echo "🗄️  初始化数据库..."
+echo "Initializing database..."
 node src/initDatabase.js
 
-# 返回根目录
+# Return to root
 cd ..
 
-# 安装前端依赖
+# Install frontend dependencies
 echo ""
-echo "📦 安装前端依赖..."
+echo "Installing frontend dependencies..."
 cd frontend
 if [ ! -d "node_modules" ]; then
     npm install
 else
-    echo "   前端依赖已安装，跳过"
+    echo "Frontend dependencies already installed, skipping"
 fi
 
 cd ..
 
 echo ""
 echo "================================"
-echo "✅ 安装完成！"
+echo "Installation complete!"
 echo ""
-echo "🚀 启动说明："
+echo "How to start:"
 echo ""
-echo "1. 启动后端（新终端窗口）："
+echo "1. Start backend (new terminal):"
 echo "   cd backend && npm run dev"
 echo ""
-echo "2. 启动前端（新终端窗口）："
+echo "2. Start frontend (new terminal):"
 echo "   cd frontend && npm run dev"
 echo ""
-echo "3. 访问平台："
+echo "3. Access platform:"
 echo "   http://localhost:5173"
 echo ""
-echo "🔐 测试账号："
-echo "   裁判: judge / judge123"
-echo "   队员: team1 / team123"
+echo "Test accounts:"
+echo "   Judge: judge / judge123"
+echo "   Player: team1 / team123"
 echo ""

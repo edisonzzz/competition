@@ -1,7 +1,7 @@
 #!/bin/bash
 
 echo "========================================"
-echo "数据库初始化脚本 - 确保只有英文题目"
+echo "Database Initialization Script - English Version"
 echo "========================================"
 echo ""
 
@@ -9,15 +9,15 @@ docker compose exec -T backend node << 'NODEJS'
 const { run, all } = require('./src/models/database');
 
 async function initDatabase() {
-  console.log('🔍 检查数据库...');
+  console.log('Checking database...');
 
-  // 1. 删除所有题目
+  // Clear old data
   await run('DELETE FROM challenges');
   await run('DELETE FROM submissions');
   await run('DELETE FROM phase_submissions');
-  console.log('✅ 已清空旧题目');
+  console.log('Cleared old challenges');
 
-  // 2. 插入5道英文选择题
+  // 2. Insert 5 English multiple choice questions
   const mcChallenges = [
     {
       id: 1, type: 'multiple_choice', title: 'Basic Defense Knowledge',
@@ -82,9 +82,9 @@ async function initDatabase() {
       [c.id, c.type, c.title, c.description, c.category, c.points, c.difficulty, c.answer, c.hints]
     );
   }
-  console.log('✅ 已插入5道英文选择题');
+  console.log('Inserted 5 English multiple choice questions');
 
-  // 3. 插入5道英文实操题
+  // 3. Insert 5 English practical challenges
   const practicalChallenges = [
     {
       id: 6, type: 'practical', title: 'Linux Process Forensics',
@@ -124,9 +124,9 @@ async function initDatabase() {
       [c.id, c.type, c.title, c.description, c.category, c.points, c.difficulty, c.answer, c.hints]
     );
   }
-  console.log('✅ 已插入5道英文实操题');
+  console.log('Inserted 5 English practical challenges');
 
-  // 4. 插入应急响应事件
+  // 4. Insert incident response event
   await run(
     'INSERT INTO challenges (id, type, title, description, category, points, difficulty, answer, hints, is_active) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 1)',
     [41, 'incident_response', 'Server Compromise - SSH Brute Force Attack',
@@ -134,15 +134,14 @@ async function initDatabase() {
      'Incident Response', 1000, 'hard', 'Complete all 5 phases',
      JSON.stringify(['Check system logs first', 'Focus on authentication logs', 'Look for suspicious processes'])]
   );
-  console.log('✅ 已插入应急响应事件');
+  console.log('Inserted incident response event');
 
-  // 验证
+  // Verify
   const final = await all('SELECT id, title, type FROM challenges ORDER BY id');
-  console.log('\n📊 最终题目列表:');
+  console.log('\nFinal challenge list:');
   final.forEach(c => console.log(`  ${c.id}. ${c.title} (${c.type})`));
 
-  console.log('\n✅ 数据库初始化完成！共 ' + final.length + ' 道题目，全部为英文');
-
+  console.log('\nDatabase initialization complete! ' + final.length + ' challenges, all in English');
   process.exit(0);
 }
 
@@ -150,5 +149,5 @@ initDatabase();
 NODEJS
 
 echo ""
-echo "✅ 数据库初始化完成！"
+echo "Database initialization complete!"
 echo ""

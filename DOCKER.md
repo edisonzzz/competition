@@ -1,168 +1,168 @@
-# 🐳 蓝队CTF平台 - Docker版本
+# 🐳 CTF Platform - Docker Version
 
-## 快速启动
+## Quick Start
 
-### 一键启动（推荐）
+### One-click Start (Recommended)
 
 ```bash
 ./docker-start.sh
 ```
 
-### 手动启动
+### Manual Start
 
 ```bash
-# 构建并启动所有服务
+# Build and start all services
 docker compose up -d --build
 
-# 查看服务状态
+# Check service status
 docker compose ps
 
-# 查看日志
+# View logs
 docker compose logs -f
 ```
 
-## 访问平台
+## Access Platform
 
-- **前端**: http://localhost:5173
-- **后端**: http://localhost:3001
+- **Frontend**: http://localhost:5173
+- **Backend**: http://localhost:3001
 
-## 测试账号
+## Test Accounts
 
-- **裁判**: `judge` / `judge123`
-- **队员**: `team1` / `team123`
+- **Judge**: `judge` / `judge123`
+- **Player**: `team1` / `team123`
 
-## Docker 命令
+## Docker Commands
 
-### 服务管理
+### Service Management
 
 ```bash
-# 启动服务
+# Start services
 docker compose up -d
 
-# 停止服务
+# Stop services
 docker compose down
 
-# 重启服务
+# Restart services
 docker compose restart
 
-# 查看服务状态
+# Check service status
 docker compose ps
 
-# 查看实时日志
+# View live logs
 docker compose logs -f
 
-# 查看后端日志
+# View backend logs
 docker compose logs -f backend
 
-# 查看前端日志
+# View frontend logs
 docker compose logs -f frontend
 ```
 
-### 数据管理
+### Data Management
 
 ```bash
-# 清理所有数据（包括数据库）
+# Clean all data (including database)
 docker compose down -v
 
-# 只停止服务，保留数据
+# Stop only, keep data
 docker compose down
 
-# 重新初始化数据库
+# Reinitialize database
 docker compose exec backend node src/initDatabase.js
 ```
 
-### 完全清理
+### Full Cleanup
 
 ```bash
-# 使用清理脚本
+# Use cleanup script
 ./docker-clean.sh
 
-# 或手动清理
+# Or manual cleanup
 docker compose down -v
 docker rmi blueteamctf-backend blueteamctf-frontend
 ```
 
-## 数据持久化
+## Data Persistence
 
-数据库文件存储在Docker volume中：
-- Volume名称: `blueteamctf_blueteam-data`
-- 容器内路径: `/app/database`
+Database files stored in Docker volume:
+- Volume name: `blueteamctf_blueteam-data`
+- Container path: `/app/database`
 
-即使停止容器（`docker compose down`），数据仍会保留。
+Data persists even after `docker compose down`.
 
-## 开发模式
+## Development Mode
 
-代码通过volume挂载，修改代码后会自动重载：
-- 后端：`nodemon` 自动重启
-- 前端：Vite HMR 热更新
+Code is mounted via volumes, changes auto-reload:
+- Backend: `nodemon` auto-restart
+- Frontend: Vite HMR hot reload
 
-## 网络配置
+## Network Configuration
 
-所有服务在同一个Docker网络中：
-- 网络名: `blueteam-network`
-- 后端容器名: `blueteam-backend`
-- 前端容器名: `blueteam-frontend`
-- 前端通过 `http://backend:3000` 访问后端
+All services in the same Docker network:
+- Network name: `blueteam-network`
+- Backend container name: `blueteam-backend`
+- Frontend container name: `blueteam-frontend`
+- Frontend accesses backend via `http://backend:3000`
 
-## 端口映射
+## Port Mapping
 
-- `3001` → 后端API（宿主机端口）
-- `3000` → 后端API（容器内端口）
-- `5173` → 前端Web界面
+- `3001` -> Backend API (host port)
+- `3000` -> Backend API (container port)
+- `5173` -> Frontend web UI
 
-## 故障排查
+## Troubleshooting
 
-### 端口已被占用
+### Port Already in Use
 
-修改 `docker-compose.yml` 中的端口映射：
+Modify port mapping in `docker-compose.yml`:
 ```yaml
 ports:
-  - "3001:3000"  # 将3000改为3001
-  - "5174:5173"  # 将5173改为5174
+  - "3001:3000"  # Change 3000 to 3001
+  - "5174:5173"  # Change 5173 to 5174
 ```
 
-### 查看详细日志
+### View Detailed Logs
 
 ```bash
-# 查看后端错误
+# View backend errors
 docker compose logs backend
 
-# 查看前端错误
+# View frontend errors
 docker compose logs frontend
 
-# 实时跟踪所有日志
+# Real-time tracking of all logs
 docker compose logs -f --tail=100
 ```
 
-### 进入容器调试
+### Enter Container for Debugging
 
 ```bash
-# 进入后端容器
+# Enter backend container
 docker compose exec backend sh
 
-# 进入前端容器
+# Enter frontend container
 docker compose exec frontend sh
 ```
 
-### 重建镜像
+### Rebuild Images
 
 ```bash
-# 强制重新构建
+# Force rebuild
 docker compose build --no-cache
 
-# 重新启动
+# Restart
 docker compose up -d
 ```
 
-## 生产环境部署
+## Production Deployment
 
-生产环境建议修改：
+For production, it is recommended to:
 
-1. 修改 `backend/.env` 中的 `JWT_SECRET`
-2. 使用 `NODE_ENV=production`
-3. 配置反向代理（Nginx）
-4. 启用HTTPS
-5. 设置资源限制：
+1. Change `JWT_SECRET` in `backend/.env`
+2. Use `NODE_ENV=production`
+3. Configure reverse proxy (Nginx)
+4. Enable HTTPS
+5. Set resource limits:
 
 ```yaml
 services:
@@ -174,21 +174,21 @@ services:
           memory: 512M
 ```
 
-## 优势
+## Advantages
 
-✅ **一键启动** - 无需手动安装Node.js和依赖  
-✅ **环境隔离** - 不污染本地环境  
-✅ **快速清理** - 一条命令清除所有数据  
-✅ **易于部署** - 直接部署到任何支持Docker的服务器  
-✅ **数据持久化** - 数据不会因容器重启而丢失  
-✅ **开发友好** - 代码修改自动热更新  
+✅ **One-click Start** - No need to manually install Node.js and dependencies  
+✅ **Environment Isolation** - Does not pollute local environment  
+✅ **Quick Cleanup** - Single command to clear all data  
+✅ **Easy Deployment** - Deploy to any Docker-supported server  
+✅ **Data Persistence** - Data does not disappear on container restart  
+✅ **Dev Friendly** - Code changes auto hot-reload  
 
-## 系统要求
+## System Requirements
 
 - Docker Engine 20.10+
 - Docker Compose 2.0+
-- 2GB+ 可用内存
-- 5GB+ 可用磁盘空间
+- 2GB+ available memory
+- 5GB+ available disk space
 
 ## License
 

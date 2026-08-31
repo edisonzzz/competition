@@ -1,9 +1,9 @@
-<!-- 你的盾牌Logo请手动保存为此文件 -->
-<!-- 当前使用的是临时SVG logo -->
+<!-- Save your shield logo as this file -->
+<!-- Currently using temporary SVG logo -->
 <!--
-  如何替换：
-  1. 将你发送的盾牌PNG图片保存为 logo.png
-  2. 替换此文件即可
+  How to replace:
+  1. Save your shield PNG image as logo.png
+  2. Replace this file
 
-  或者保持使用SVG格式的logo.svg
+  Or keep using the SVG format logo.svg
 -->

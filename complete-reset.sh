@@ -1,7 +1,7 @@
 #!/bin/bash
 
 echo "========================================"
-echo "完整数据库修复脚本"
+echo "Complete Database Reset Script"
 echo "========================================"
 
 docker compose exec -T backend node << 'NODEJS'
@@ -9,10 +9,10 @@ const { run, all } = require('./src/models/database');
 const bcrypt = require('bcryptjs');
 
 async function fullReset() {
-  console.log('🔧 开始完整修复...\n');
+  console.log('Starting full reset...\n');
 
-  // 1. 创建表结构
-  console.log('📋 创建表结构...');
+  // 1. Create tables
+  console.log('Creating tables...');
   await run(`CREATE TABLE IF NOT EXISTS users (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     username TEXT UNIQUE NOT NULL,
@@ -78,19 +78,19 @@ async function fullReset() {
     FOREIGN KEY (phase_id) REFERENCES phases(id)
   )`);
 
-  console.log('✅ 表结构完成\n');
+  console.log('Tables created\n');
 
-  // 2. 清空数据
-  console.log('🗑️  清空旧数据...');
+  // 2. Clear old data
+  console.log('Clearing old data...');
   await run('DELETE FROM phase_submissions');
   await run('DELETE FROM phases');
   await run('DELETE FROM submissions');
   await run('DELETE FROM challenges');
   await run('DELETE FROM users WHERE id > 1');
-  console.log('✅ 清空完成\n');
+  console.log('Data cleared\n');
 
-  // 3. 创建10个队伍
-  console.log('👥 创建10个英文队伍...');
+  // 3. Create 10 teams
+  console.log('Creating 10 teams...');
   const teams = [
     'Blue Shield Team Alpha', 'Blue Shield Team Beta', 'Cyber Guardians',
     'Security Vanguard', 'Blue Force Assault', 'Digital Defenders',
@@ -101,11 +101,11 @@ async function fullReset() {
     const hashedPassword = bcrypt.hashSync('team123', 10);
     await run('INSERT INTO users (username, password, role, team_name) VALUES (?, ?, ?, ?)',
       ['team' + (i + 1), hashedPassword, 'player', teams[i]]);
-    console.log(`  ✓ team${i + 1}: ${teams[i]}`);
+    console.log(`  team${i + 1}: ${teams[i]}`);
   }
 
-  // 4. 插入5道选择题
-  console.log('\n📝 插入选择题...');
+  // 4. Insert 5 multiple choice questions
+  console.log('\nInserting multiple choice questions...');
   const mc = [
     {id: 1, title: 'Basic Defense Knowledge', desc: 'Which command can view all running processes in a Linux system?', cat: 'Basic Knowledge', points: 100, diff: 'easy', ans: 'B',
      opts: [{value:'A',label:'ls'},{value:'B',label:'ps'},{value:'C',label:'top'},{value:'D',label:'netstat'}]},
@@ -122,11 +122,11 @@ async function fullReset() {
   for (const c of mc) {
     await run('INSERT INTO challenges (id, type, title, description, category, points, difficulty, answer, hints, is_active) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 1)',
       [c.id, 'multiple_choice', c.title, c.desc, c.cat, c.points, c.diff, c.ans, JSON.stringify(c.opts)]);
-    console.log(`  ✓ ${c.id}. ${c.title}`);
+    console.log(`  ${c.id}. ${c.title}`);
   }
 
-  // 5. 插入5道实操题
-  console.log('\n📝 插入实操题...');
+  // 5. Insert 5 practical challenges
+  console.log('\nInserting practical challenges...');
   const practical = [
     {id: 6, title: 'Linux Process Forensics', desc: 'Your server CPU usage is 95%. A suspicious process /tmp/.systemd-monitor with PID 1337 is found.\n\n**Task**: What type of malicious program is this? (Answer: CryptoMiner/RemoteControl/Ransomware/DDoSTrojan)', cat: 'Linux Forensics', points: 300, ans: 'CryptoMiner'},
     {id: 7, title: 'Log Analysis Practice', desc: 'Analyze auth.log showing multiple failed SSH login attempts from 192.168.1.100, finally succeeded.\n\n**Task**: What type of attack? (Answer: BruteForce/SQLInjection/XSS/CSRF)', cat: 'Log Analysis', points: 250, ans: 'BruteForce'},
@@ -138,18 +138,18 @@ async function fullReset() {
   for (const c of practical) {
     await run('INSERT INTO challenges (id, type, title, description, category, points, difficulty, answer, hints, is_active) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 1)',
       [c.id, 'practical', c.title, c.desc, c.cat, c.points, 'medium', c.ans, JSON.stringify(['Check logs', 'Analyze carefully'])]);
-    console.log(`  ✓ ${c.id}. ${c.title}`);
+    console.log(`  ${c.id}. ${c.title}`);
   }
 
-  // 6. 插入应急响应事件
-  console.log('\n📝 插入应急响应事件...');
+  // 6. Insert incident response event
+  console.log('\nInserting incident response event...');
   await run('INSERT INTO challenges (id, type, title, description, category, points, difficulty, answer, hints, is_active) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 1)',
     [41, 'incident_response', 'Server Compromise - SSH Brute Force Attack',
      'A production web server (10.0.1.15) has been compromised. The monitoring system detected unusual CPU usage and suspicious network connections. Your task is to investigate the incident following the standard SOP and complete all phases of the incident response process.',
      'Incident Response', 1000, 'hard', 'Complete all 5 phases', JSON.stringify(['Check system logs', 'Focus on auth logs'])]);
-  console.log('  ✓ 41. Server Compromise - SSH Brute Force Attack');
+  console.log('  41. Server Compromise - SSH Brute Force Attack');
 
-  // 7. 创建5个Phases
+  // 7. Create 5 Phases
   const phases = [
     {num: 1, title: 'Alert Triage & Initial Analysis', desc: 'Review SIEM alerts', fields: [{name:'attack_type',label:'Attack Type',answer:'BruteForce'},{name:'source_ip',label:'Source IP',answer:'192.168.1.100'}], points: 200},
     {num: 2, title: 'Process & Connection Analysis', desc: 'Identify malicious process', fields: [{name:'malicious_pid',label:'PID',answer:'1337'}], points: 200},
@@ -162,10 +162,10 @@ async function fullReset() {
     await run('INSERT INTO phases (challenge_id, phase_number, title, description, target_objective, required_fields, points) VALUES (?, ?, ?, ?, ?, ?, ?)',
       [41, p.num, p.title, p.desc, p.title, JSON.stringify(p.fields), p.points]);
   }
-  console.log('  ✓ Created 5 phases');
+  console.log('  Created 5 phases');
 
-  // 8. 添加模拟提交数据
-  console.log('\n🎮 添加模拟提交...');
+  // 8. Add mock submission data
+  console.log('\nAdding mock submissions...');
   const subs = [
     {uid: 2, cid: 1, ans: 'B', correct: 1, pts: 100},
     {uid: 2, cid: 2, ans: 'C', correct: 1, pts: 100},
@@ -183,27 +183,27 @@ async function fullReset() {
     await run('INSERT INTO submissions (user_id, challenge_id, answer, is_correct, points_earned) VALUES (?, ?, ?, ?, ?)',
       [s.uid, s.cid, s.ans, s.correct, s.pts]);
   }
-  console.log(`  ✓ Added ${subs.length} mock submissions`);
+  console.log(`  Added ${subs.length} mock submissions`);
 
-  // 验证
-  console.log('\n📊 最终统计:');
+  // Verify
+  console.log('\nFinal Statistics:');
   const stats = {
     teams: await all('SELECT COUNT(*) as c FROM users WHERE role = "player"'),
     challenges: await all('SELECT COUNT(*) as c FROM challenges'),
     submissions: await all('SELECT COUNT(*) as c FROM submissions'),
     phases: await all('SELECT COUNT(*) as c FROM phases')
   };
-  console.log(`  - 队伍: ${stats.teams[0].c}`);
-  console.log(`  - 题目: ${stats.challenges[0].c}`);
-  console.log(`  - 提交: ${stats.submissions[0].c}`);
-  console.log(`  - Phases: ${stats.phases[0].c}`);
+  console.log(`  Teams: ${stats.teams[0].c}`);
+  console.log(`  Challenges: ${stats.challenges[0].c}`);
+  console.log(`  Submissions: ${stats.submissions[0].c}`);
+  console.log(`  Phases: ${stats.phases[0].c}`);
 
-  console.log('\n✅ 数据库完全修复完成！');
+  console.log('\nDatabase reset complete!');
   process.exit(0);
 }
 
 fullReset().catch(err => {
-  console.error('❌ 错误:', err);
+  console.error('Error:', err);
   process.exit(1);
 });
 NODEJS

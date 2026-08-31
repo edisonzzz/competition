@@ -1,20 +1,20 @@
-# Logo 说明
+# Logo Guide
 
-请将您提供的logo图片保存为以下文件名：
+Save your logo image with the following filenames:
 
-1. `frontend/public/logo.png` - 用于前端显示
-2. `logo.png` - 项目根目录备份
+1. `frontend/public/logo.png` - For frontend display
+2. `logo.png` - Project root backup
 
-## Logo 使用位置
+## Logo Usage Locations
 
-- 登录页面顶部
-- 导航栏左侧
-- 浏览器标签页图标
+- Login page header
+- Navigation bar left side
+- Browser tab icon
 
-## 建议尺寸
+## Recommended Dimensions
 
-- PNG 格式
-- 推荐尺寸: 512x512px 或更大
-- 透明背景更佳
+- PNG format
+- Recommended size: 512x512px or larger
+- Transparent background preferred
 
-您可以将之前发送的盾牌logo图片保存到这些位置。
+Save your shield logo image to these locations.

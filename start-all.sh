@@ -1,54 +1,54 @@
 #!/bin/bash
 
-echo "🛡️  蓝队CTF平台 - 一键启动脚本"
+echo "🛡️  CTF Platform - One-click Start Script"
 echo "================================"
 echo ""
 
-# 检查是否在项目根目录
+# Check if in project root
 if [ ! -d "backend" ] || [ ! -d "frontend" ]; then
-    echo "❌ 错误: 请在项目根目录运行此脚本"
+    echo "Error: Please run this script from the project root directory"
     exit 1
 fi
 
-# 启动后端
-echo "🚀 启动后端服务..."
+# Start backend
+echo "Starting backend service..."
 cd backend
 npm run dev > ../backend.log 2>&1 &
 BACKEND_PID=$!
-echo "   后端进程 PID: $BACKEND_PID"
+echo "Backend PID: $BACKEND_PID"
 cd ..
 
-# 等待后端启动
-echo "⏳ 等待后端启动..."
+# Wait for backend to start
+echo "Waiting for backend to start..."
 sleep 3
 
-# 启动前端
-echo "🚀 启动前端服务..."
+# Start frontend
+echo "Starting frontend service..."
 cd frontend
 npm run dev > ../frontend.log 2>&1 &
 FRONTEND_PID=$!
-echo "   前端进程 PID: $FRONTEND_PID"
+echo "Frontend PID: $FRONTEND_PID"
 cd ..
 
 echo ""
 echo "================================"
-echo "✅ 服务已启动！"
+echo "Services started!"
 echo ""
-echo "📡 后端: http://localhost:3000"
-echo "🌐 前端: http://localhost:5173"
+echo "Backend: http://localhost:3000"
+echo "Frontend: http://localhost:5173"
 echo ""
-echo "🔐 测试账号："
-echo "   裁判: judge / judge123"
-echo "   队员: team1 / team123"
+echo "Test accounts:"
+echo "   Judge: judge / judge123"
+echo "   Player: team1 / team123"
 echo ""
-echo "📋 进程信息："
-echo "   后端 PID: $BACKEND_PID"
-echo "   前端 PID: $FRONTEND_PID"
+echo "Process info:"
+echo "   Backend PID: $BACKEND_PID"
+echo "   Frontend PID: $FRONTEND_PID"
 echo ""
-echo "🛑 停止服务："
+echo "Stop services:"
 echo "   kill $BACKEND_PID $FRONTEND_PID"
 echo ""
-echo "📝 日志文件："
-echo "   后端日志: backend.log"
-echo "   前端日志: frontend.log"
+echo "Log files:"
+echo "   Backend log: backend.log"
+echo "   Frontend log: frontend.log"
 echo ""

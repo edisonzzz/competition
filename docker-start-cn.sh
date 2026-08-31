@@ -1,28 +1,28 @@
 #!/bin/bash
 
 # Cybersecurity Competition Platform (China Mirror)
-# 快速启动脚本 - 使用国内镜像源
+# Quick start script - using China mirror sources
 
 echo "🚀 Starting Competition Platform (China Mirror)..."
 echo ""
 
-# 检查Docker
+# Check Docker
 if ! command -v docker &> /dev/null; then
     echo "❌ Docker not installed. Please install Docker first."
     exit 1
 fi
 
-# 检查Docker Compose
+# Check Docker Compose
 if ! command -v docker compose &> /dev/null; then
     echo "❌ Docker Compose not installed. Please install Docker Compose first."
     exit 1
 fi
 
-# 停止旧容器
+# Stop old containers
 echo "🛑 Stopping old containers..."
 docker compose down
 
-# 清理旧镜像（可选）
+# Cleaning old images...
 read -p "⚠️  Clear old images? (y/N): " -n 1 -r
 echo
 if [[ $REPLY =~ ^[Yy]$ ]]; then
@@ -30,19 +30,19 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
     docker compose down --rmi all
 fi
 
-# 构建镜像（使用国内源）
+# Build images (using China mirrors)
 echo "🔨 Building with China mirrors..."
 docker compose build --no-cache
 
-# 启动服务
+# Start services
 echo "🚀 Starting services..."
 docker compose up -d
 
-# 等待服务启动
+# Wait for services to start
 echo "⏳ Waiting for services to start..."
 sleep 10
 
-# 检查服务状态
+# Check service status
 echo ""
 echo "📊 Service Status:"
 docker compose ps
