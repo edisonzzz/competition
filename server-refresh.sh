@@ -5,7 +5,7 @@ PROJECT_DIR="$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)"
 cd "$PROJECT_DIR"
 
 STAMP="$(date +%Y%m%d-%H%M%S)"
-echo "Updating ANSEN competition platform..."
+echo "Updating competition platform..."
 
 if docker compose ps --status running --services 2>/dev/null | grep -q '^backend$'; then
   docker compose exec -T backend sh -c "if [ -f /app/database/blueteam.db ]; then cp /app/database/blueteam.db /app/database/blueteam.db.backup-$STAMP; fi"

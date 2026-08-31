@@ -1,6 +1,6 @@
-# ANSEN 网络安全竞技平台 (国内镜像优化版)
+# 网络安全竞技平台 (国内镜像优化版)
 
-> ANSEN Cybersecurity Competition Platform - China Mirror Optimized
+> Cybersecurity Competition Platform - China Mirror Optimized
 
 基于事件调查流程的应急响应竞赛系统，针对国内网络环境优化。
 
@@ -128,4 +128,4 @@ MIT License
 
 ---
 
-**ANSEN** - Cybersecurity Competition Platform
+**网络安全竞技平台** - Cybersecurity Competition Platform

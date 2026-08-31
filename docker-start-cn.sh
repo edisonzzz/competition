@@ -1,9 +1,9 @@
 #!/bin/bash
 
-# ANSEN Cybersecurity Competition Platform (China Mirror)
+# Cybersecurity Competition Platform (China Mirror)
 # 快速启动脚本 - 使用国内镜像源
 
-echo "🚀 Starting ANSEN Platform (China Mirror)..."
+echo "🚀 Starting Competition Platform (China Mirror)..."
 echo ""
 
 # 检查Docker
@@ -48,7 +48,7 @@ echo "📊 Service Status:"
 docker compose ps
 
 echo ""
-echo "✅ ANSEN Platform is running!"
+echo "✅ Competition Platform is running!"
 echo ""
 echo "🌐 Access URLs:"
 echo "   Frontend: http://localhost:5173"

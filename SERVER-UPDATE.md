@@ -1,4 +1,4 @@
-# ANSEN CN Server Update
+# CN Server Update
 
 This package fixes the deployed server issues together:
 

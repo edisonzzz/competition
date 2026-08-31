@@ -559,7 +559,7 @@ async function seedMockScores() {
 }
 
 async function initialize() {
-  console.log('Initializing ANSEN competition database...');
+  console.log('Initializing competition database...');
   await ensureTables();
   await migrate();
   await seedUsers();

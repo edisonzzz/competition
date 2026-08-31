@@ -1,7 +1,7 @@
 const { run, get, all } = require('../models/database');
 
 /**
- * ANSEN Competition Platform Schema Migration
+ * Competition Platform Schema Migration
  * Adds support for:
  * - Team management (5 members + 1 team account)
  * - Question pool (prevents duplicate questions per team)
@@ -232,7 +232,7 @@ async function createAuditLogTable() {
 }
 
 async function migrate() {
-  console.log('Starting ANSEN schema migration...');
+  console.log('Starting schema migration...');
 
   try {
     await migrateUsersTable();
@@ -245,7 +245,7 @@ async function migrate() {
     await createQuestionTemplatesTable();
     await createAuditLogTable();
 
-    console.log('✅ ANSEN schema migration completed successfully!');
+    console.log('✅ schema migration completed successfully!');
     return true;
   } catch (error) {
     console.error('❌ Migration failed:', error);

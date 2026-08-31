@@ -28,11 +28,11 @@ app.use('/api/pool', poolRoutes);
 
 // 健康检查
 app.get('/health', (req, res) => {
-  res.json({ status: 'ok', message: 'ANSEN competition API is running' });
+  res.json({ status: 'ok', message: 'Competition API is running' });
 });
 
 app.listen(PORT, () => {
-  console.log('ANSEN competition backend started');
+  console.log('Competition backend started');
   console.log(`Server: http://localhost:${PORT}`);
   console.log(`Environment: ${process.env.NODE_ENV}`);
 });
