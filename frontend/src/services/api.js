@@ -5,12 +5,19 @@ const api = axios.create({
   timeout: 10000,
 });
 
-// 请求拦截器 - 添加token
+// 请求拦截器 - 添加token和语言参数
 api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('token');
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
+    }
+    const lang = localStorage.getItem('lang') || 'en';
+    // Add lang query param to GET requests for challenges/pool/phases
+    if (config.method === 'get' && !config.params) {
+      config.params = { lang };
+    } else if (config.method === 'get' && config.params) {
+      config.params.lang = lang;
     }
     return config;
   },

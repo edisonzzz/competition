@@ -1,9 +1,16 @@
 import { Outlet, Link, useLocation } from 'react-router-dom';
-import { Home, Trophy, FileText, Settings, LogOut, Play, Users } from 'lucide-react';
+import { Home, Trophy, FileText, Settings, LogOut, Play, Users, Globe } from 'lucide-react';
 import CompetitionTimer from './CompetitionTimer';
 import anssiLogo from '../assets/anssi-logo.png';
 
 export default function Layout({ user, onLogout }) {
+  const currentLang = localStorage.getItem('lang') || 'en';
+
+  const toggleLang = () => {
+    const newLang = currentLang === 'en' ? 'fr' : 'en';
+    localStorage.setItem('lang', newLang);
+    window.location.reload();
+  };
   const location = useLocation();
 
   const isActive = (path) => {
@@ -50,6 +57,10 @@ export default function Layout({ user, onLogout }) {
                   {user.team_name || ''} &middot; {user.role === 'judge' ? 'Judge' : 'Player'}
                 </p>
               </div>
+              <button onClick={toggleLang} className="btn btn-secondary flex items-center gap-1 text-xs px-2 py-1">
+                <Globe className="w-4 h-4" />
+                {currentLang === 'en' ? 'FR' : 'EN'}
+              </button>
               <button onClick={onLogout} className="btn btn-secondary flex items-center gap-2">
                 <LogOut className="w-4 h-4" /> Logout
               </button>

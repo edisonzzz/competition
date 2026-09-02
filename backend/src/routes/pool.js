@@ -7,6 +7,18 @@ const router = express.Router();
 const MAX_SKIPS_PER_PHASE = 3;
 const QUESTION_TIME_LIMIT_SECONDS = 180;
 
+// Helper: apply language to challenge data
+function applyLang(challenge, lang) {
+  if (!challenge) return challenge;
+  if (lang === 'fr' && challenge.title_fr) {
+    challenge.title = challenge.title_fr;
+    challenge.description = challenge.description_fr;
+  }
+  delete challenge.title_fr;
+  delete challenge.description_fr;
+  return challenge;
+}
+
 /**
  * Get next question from team pool
  * GET /api/pool/next
@@ -21,6 +33,7 @@ router.get('/next', auth, async (req, res) => {
   try {
     const userId = req.user.id;
     const teamId = req.user.team_id;
+    const lang = req.query.lang || 'en';
 
     if (!teamId) {
       return res.status(400).json({ error: 'You are not part of any team' });
@@ -85,6 +98,8 @@ router.get('/next', auth, async (req, res) => {
            WHERE user_id = ? AND challenge_id = ? AND skipped = 0 AND phase_number = ?`,
           [userId, currentAssignment.challenge_id, phaseNumber]
         );
+
+        applyLang(currentAssignment, lang);
 
         let options = [];
         if (currentAssignment.type === 'multiple_choice' && hints && Array.isArray(hints) && hints.length > 0) {
@@ -152,6 +167,8 @@ router.get('/next', auth, async (req, res) => {
        VALUES (?, ?, ?, CURRENT_TIMESTAMP)`,
       [teamId, nextChallenge.id, userId]
     );
+
+    applyLang(nextChallenge, lang);
 
     let hints = nextChallenge.hints;
     try { hints = JSON.parse(hints); } catch(e) { hints = []; }

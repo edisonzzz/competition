@@ -4,6 +4,49 @@ const { auth, isJudge } = require('../middleware/auth');
 
 const router = express.Router();
 
+// Get competition status
+router.get('/competition-status', auth, isJudge, async (req, res) => {
+  try {
+    const activePhase = await get("SELECT * FROM competition_phases WHERE is_active = 1 ORDER BY phase_number LIMIT 1");
+    const settings = await get("SELECT * FROM competition_settings LIMIT 1");
+    res.json({
+      is_active: !!activePhase,
+      current_phase: activePhase ? activePhase.phase_number : null,
+      phase_name: activePhase ? activePhase.phase_name : null,
+      start_time: settings ? settings.start_time : null,
+      end_time: settings ? settings.end_time : null
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Failed to get competition status' });
+  }
+});
+
+// Start or stop competition
+router.post('/competition-control', auth, isJudge, async (req, res) => {
+  try {
+    const { action } = req.body; // 'start' or 'stop'
+
+    if (action === 'start') {
+      await run("UPDATE competition_phases SET is_active = 0", []);
+      await run("UPDATE competition_phases SET is_active = 1 WHERE phase_number = 1", []);
+    } else if (action === 'stop') {
+      await run("UPDATE competition_phases SET is_active = 0", []);
+    }
+
+    const activePhase = await get("SELECT * FROM competition_phases WHERE is_active = 1 ORDER BY phase_number LIMIT 1");
+    res.json({
+      success: true,
+      is_active: !!activePhase,
+      current_phase: activePhase ? activePhase.phase_number : null,
+      phase_name: activePhase ? activePhase.phase_name : null
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Failed to control competition' });
+  }
+});
+
 // Get all submissions (judge)
 router.get('/submissions', auth, isJudge, async (req, res) => {
   try {
@@ -32,6 +75,7 @@ router.get('/submissions', auth, isJudge, async (req, res) => {
 router.get('/statistics', auth, isJudge, async (req, res) => {
   try {
     const totalUsers = await get("SELECT COUNT(*) as count FROM users WHERE role = 'player'");
+    const totalTeams = await get("SELECT COUNT(*) as count FROM teams");
     const totalChallenges = await get("SELECT COUNT(*) as count FROM challenges WHERE is_active = 1");
     const totalSubmissions = await get("SELECT COUNT(*) as count FROM submissions");
     const correctSubmissions = await get("SELECT COUNT(*) as count FROM submissions WHERE is_correct = 1");
@@ -39,6 +83,7 @@ router.get('/statistics', auth, isJudge, async (req, res) => {
     res.json({
       statistics: {
         total_players: totalUsers.count,
+        total_teams: totalTeams.count,
         total_challenges: totalChallenges.count,
         total_submissions: totalSubmissions.count,
         correct_submissions: correctSubmissions.count,

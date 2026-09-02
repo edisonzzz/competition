@@ -4,17 +4,18 @@ const { auth } = require('../middleware/auth');
 
 const router = express.Router();
 
-// 获取challenge的所有phases
+// Get all phases for a challenge
 router.get('/:challengeId/phases', auth, async (req, res) => {
   try {
     const { challengeId } = req.params;
+    const lang = req.query.lang || 'en';
 
     const phases = await all(
       'SELECT * FROM phases WHERE challenge_id = ? ORDER BY phase_number',
       [challengeId]
     );
 
-    // 获取用户的提交进度
+    // Get user's submission progress
     const userSubmissions = await all(
       `SELECT
          phase_id,
@@ -27,12 +28,19 @@ router.get('/:challengeId/phases', auth, async (req, res) => {
       [req.user.id, challengeId]
     );
 
-    // 合并数据
+    // Merge data with language support
     const phasesWithProgress = phases.map(phase => {
       const submission = userSubmissions.find(s => s.phase_id === phase.id);
+      let fields = phase.required_fields ? JSON.parse(phase.required_fields) : [];
+      // Apply French labels
+      if (lang === 'fr') {
+        fields = fields.map(f => ({ ...f, label: f.label_fr || f.label }));
+      }
       return {
         ...phase,
-        required_fields: phase.required_fields ? JSON.parse(phase.required_fields) : [],
+        title: lang === 'fr' && phase.title_fr ? phase.title_fr : phase.title,
+        description: lang === 'fr' && phase.description_fr ? phase.description_fr : phase.description,
+        required_fields: fields,
         hints: phase.hints ? JSON.parse(phase.hints) : [],
         completed: submission ? submission.is_correct === 1 : false,
         points_earned: submission ? submission.points_earned : 0

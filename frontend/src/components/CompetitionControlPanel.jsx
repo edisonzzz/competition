@@ -1,31 +1,48 @@
 import { useState, useEffect } from 'react';
-import { Power, Clock, Calendar, Save, AlertCircle } from 'lucide-react';
+import { Power, Clock, Calendar, Save, AlertCircle, Loader } from 'lucide-react';
+import api from '../services/api';
 
 export default function CompetitionControlPanel() {
-  const [isActive, setIsActive] = useState(true);
-  const [startTime, setStartTime] = useState('2026-01-01T00:00');
-  const [endTime, setEndTime] = useState('2026-12-31T23:59');
+  const [isActive, setIsActive] = useState(false);
+  const [phaseName, setPhaseName] = useState('');
+  const [loading, setLoading] = useState(true);
+  const [toggling, setToggling] = useState(false);
+  const [startTime, setStartTime] = useState('');
+  const [endTime, setEndTime] = useState('');
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState('');
 
-  const handleSave = async () => {
-    setSaving(true);
-    setMessage('');
+  useEffect(() => {
+    loadStatus();
+  }, []);
 
+  const loadStatus = async () => {
     try {
-      // TODO: API call to update competition settings
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      setMessage('Settings saved successfully!');
-      setTimeout(() => setMessage(''), 3000);
+      const res = await api.get('/judge/competition-status');
+      setIsActive(res.data.is_active);
+      setPhaseName(res.data.phase_name || '');
     } catch (error) {
-      setMessage('Failed to save settings');
+      console.error('Failed to load competition status');
     } finally {
-      setSaving(false);
+      setLoading(false);
     }
   };
 
-  const toggleCompetition = () => {
-    setIsActive(!isActive);
+  const toggleCompetition = async () => {
+    setToggling(true);
+    setMessage('');
+    try {
+      const action = isActive ? 'stop' : 'start';
+      const res = await api.post('/judge/competition-control', { action });
+      setIsActive(res.data.is_active);
+      setPhaseName(res.data.phase_name || '');
+      setMessage(isActive ? 'Competition stopped' : 'Competition started!');
+      setTimeout(() => setMessage(''), 3000);
+    } catch (error) {
+      setMessage('Failed to toggle competition');
+    } finally {
+      setToggling(false);
+    }
   };
 
   return (
@@ -47,6 +64,10 @@ export default function CompetitionControlPanel() {
         </div>
 
         <div className="flex items-center gap-4 p-6 bg-gray-50 rounded-lg">
+          {loading ? (
+            <div className="flex items-center gap-3"><Loader className="w-5 h-5 animate-spin" /> Loading...</div>
+          ) : (
+            <>
           <Power className={`w-8 h-8 ${isActive ? 'text-green-600' : 'text-red-600'}`} />
           <div className="flex-1">
             <p className="font-semibold text-gray-900">
@@ -57,15 +78,28 @@ export default function CompetitionControlPanel() {
                 ? 'Players can submit answers and view challenges'
                 : 'Players cannot access challenges or submit answers'}
             </p>
+            {phaseName && <p className="text-xs text-blue-600 mt-1">Current Phase: {phaseName}</p>}
           </div>
           <button
             onClick={toggleCompetition}
+            disabled={toggling}
             className={`btn ${isActive ? 'btn-secondary' : 'btn-primary'} flex items-center gap-2`}
           >
             <Power className="w-5 h-5" />
-            {isActive ? 'Stop Competition' : 'Start Competition'}
+            {toggling ? 'Processing...' : isActive ? 'Stop Competition' : 'Start Competition'}
           </button>
+            </>
+          )}
         </div>
+        {message && (
+          <div className={`mt-2 p-2 text-sm rounded-lg ${
+            message.includes('successfully') || message.includes('started') || message.includes('stopped')
+              ? 'bg-green-50 text-green-800'
+              : 'bg-red-50 text-red-800'
+          }`}>
+            {message}
+          </div>
+        )}
       </div>
 
       {/* Time Settings */}

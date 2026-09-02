@@ -46,6 +46,14 @@ async function migrateChallengesTable() {
     await run('ALTER TABLE challenges ADD COLUMN assigned_to_user_id INTEGER');
   }
 
+  if (!columnNames.includes('title_fr')) {
+    await run('ALTER TABLE challenges ADD COLUMN title_fr TEXT');
+  }
+
+  if (!columnNames.includes('description_fr')) {
+    await run('ALTER TABLE challenges ADD COLUMN description_fr TEXT');
+  }
+
   console.log('Challenges table migrated.');
 }
 
@@ -138,6 +146,18 @@ async function createQuestionPoolTable() {
   await run('CREATE INDEX IF NOT EXISTS idx_question_pool_user ON question_pool(assigned_to_user_id)');
 
   console.log('Question pool table created.');
+}
+
+async function migratePhasesTable() {
+  const tableInfo = await all("PRAGMA table_info(phases)");
+  const columnNames = tableInfo.map(col => col.name);
+  if (!columnNames.includes('title_fr')) {
+    await run('ALTER TABLE phases ADD COLUMN title_fr TEXT');
+  }
+  if (!columnNames.includes('description_fr')) {
+    await run('ALTER TABLE phases ADD COLUMN description_fr TEXT');
+  }
+  console.log('Phases table migrated.');
 }
 
 async function createCompetitionPhasesTable() {
@@ -238,6 +258,7 @@ async function migrate() {
     await migrateUsersTable();
     await migrateChallengesTable();
     await migrateSubmissionsTable();
+    await migratePhasesTable();
     await createTeamsTable();
     await createTeamMembersTable();
     await createQuestionPoolTable();
