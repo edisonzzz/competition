@@ -56,7 +56,7 @@ router.get('/next', auth, async (req, res) => {
     );
 
     const currentAssignment = await get(
-      `SELECT qp.*, c.id as challenge_id, c.title, c.description, c.type, c.points,
+      `SELECT qp.*, c.id as challenge_id, c.title, c.title_fr, c.description, c.description_fr, c.type, c.points,
               c.category, c.difficulty, c.hints, c.answer
        FROM question_pool qp
        JOIN challenges c ON c.id = qp.challenge_id
