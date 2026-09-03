@@ -183,40 +183,40 @@ async function seedChallenges() {
   // Phase 1: MC questions (easy, medium, hard)
   console.log('Creating Phase 1: Multiple Choice questions...');
   for (const q of mcEasy) {
-    await run('INSERT INTO challenges (id,type,title,title_fr,description,description_fr,points,category,answer,hints,difficulty,phase_number,is_active) VALUES (?,?,?,?,?,?,?,?,?,?,?,1,1)',
-      [cid++, q.t, q.t, q.tf, q.d, q.df, q.p, q.cat, q.a, makeHints(q.o), 'easy']);
+    await run('INSERT INTO challenges (id,type,title,title_fr,description,description_fr,points,category,answer,hints,difficulty,phase_number,is_active) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?) ON CONFLICT(id) DO UPDATE SET title=excluded.title,title_fr=excluded.title_fr,description=excluded.description,description_fr=excluded.description_fr,points=excluded.points,category=excluded.category,answer=excluded.answer,hints=excluded.hints,difficulty=excluded.difficulty,phase_number=excluded.phase_number,is_active=excluded.is_active',
+      [cid++, 'multiple_choice', q.t, q.tf, q.d, q.df, q.p, q.cat, q.a, makeHints(q.o), 'easy', 1, 1]);
   }
   for (const q of mcMedium) {
-    await run('INSERT INTO challenges (id,type,title,title_fr,description,description_fr,points,category,answer,hints,difficulty,phase_number,is_active) VALUES (?,?,?,?,?,?,?,?,?,?,?,1,1)',
-      [cid++, q.t, q.t, q.tf, q.d, q.df, q.p, q.cat, q.a, makeHints(q.o), 'medium']);
+    await run('INSERT INTO challenges (id,type,title,title_fr,description,description_fr,points,category,answer,hints,difficulty,phase_number,is_active) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?) ON CONFLICT(id) DO UPDATE SET title=excluded.title,title_fr=excluded.title_fr,description=excluded.description,description_fr=excluded.description_fr,points=excluded.points,category=excluded.category,answer=excluded.answer,hints=excluded.hints,difficulty=excluded.difficulty,phase_number=excluded.phase_number,is_active=excluded.is_active',
+      [cid++, 'multiple_choice', q.t, q.tf, q.d, q.df, q.p, q.cat, q.a, makeHints(q.o), 'medium', 1, 1]);
   }
   for (const q of mcHard) {
-    await run('INSERT INTO challenges (id,type,title,title_fr,description,description_fr,points,category,answer,hints,difficulty,phase_number,is_active) VALUES (?,?,?,?,?,?,?,?,?,?,?,1,1)',
-      [cid++, q.t, q.t, q.tf, q.d, q.df, q.p, q.cat, q.a, makeHints(q.o), 'hard']);
+    await run('INSERT INTO challenges (id,type,title,title_fr,description,description_fr,points,category,answer,hints,difficulty,phase_number,is_active) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?) ON CONFLICT(id) DO UPDATE SET title=excluded.title,title_fr=excluded.title_fr,description=excluded.description,description_fr=excluded.description_fr,points=excluded.points,category=excluded.category,answer=excluded.answer,hints=excluded.hints,difficulty=excluded.difficulty,phase_number=excluded.phase_number,is_active=excluded.is_active',
+      [cid++, 'multiple_choice', q.t, q.tf, q.d, q.df, q.p, q.cat, q.a, makeHints(q.o), 'hard', 1, 1]);
   }
   console.log(`  Inserted ${mcEasy.length + mcMedium.length + mcHard.length} MC questions (EN/FR)`);
 
   // Phase 2: Technical/Practical questions
   console.log('Creating Phase 2: Technical challenges...');
   for (const q of techEasy) {
-    await run('INSERT INTO challenges (id,type,title,title_fr,description,description_fr,points,category,answer,hints,difficulty,phase_number,is_active) VALUES (?,?,?,?,?,?,?,?,?,?,?,2,1)',
-      [cid++, 'practical', q.t, q.tf, q.d, q.d, q.p, 'Technical Analysis', q.a, defaultHints, 'easy']);
+    await run('INSERT INTO challenges (id,type,title,title_fr,description,description_fr,points,category,answer,hints,difficulty,phase_number,is_active) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?) ON CONFLICT(id) DO UPDATE SET title=excluded.title,title_fr=excluded.title_fr,description=excluded.description,description_fr=excluded.description_fr,points=excluded.points,category=excluded.category,answer=excluded.answer,hints=excluded.hints,difficulty=excluded.difficulty,phase_number=excluded.phase_number,is_active=excluded.is_active',
+      [cid++, 'practical', q.t, q.tf, q.d, q.d, q.p, 'Technical Analysis', q.a, defaultHints, 'easy', 2, 1]);
   }
   for (const q of techMedium) {
-    await run('INSERT INTO challenges (id,type,title,title_fr,description,description_fr,points,category,answer,hints,difficulty,phase_number,is_active) VALUES (?,?,?,?,?,?,?,?,?,?,?,2,1)',
-      [cid++, 'practical', q.t, q.tf, q.d, q.d, q.p, 'Technical Analysis', q.a, defaultHints, 'medium']);
+    await run('INSERT INTO challenges (id,type,title,title_fr,description,description_fr,points,category,answer,hints,difficulty,phase_number,is_active) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?) ON CONFLICT(id) DO UPDATE SET title=excluded.title,title_fr=excluded.title_fr,description=excluded.description,description_fr=excluded.description_fr,points=excluded.points,category=excluded.category,answer=excluded.answer,hints=excluded.hints,difficulty=excluded.difficulty,phase_number=excluded.phase_number,is_active=excluded.is_active',
+      [cid++, 'practical', q.t, q.tf, q.d, q.d, q.p, 'Technical Analysis', q.a, defaultHints, 'medium', 2, 1]);
   }
   for (const q of techHard) {
-    await run('INSERT INTO challenges (id,type,title,title_fr,description,description_fr,points,category,answer,hints,difficulty,phase_number,is_active) VALUES (?,?,?,?,?,?,?,?,?,?,?,2,1)',
-      [cid++, 'practical', q.t, q.tf, q.d, q.d, q.p, 'Technical Analysis', q.a, defaultHints, 'hard']);
+    await run('INSERT INTO challenges (id,type,title,title_fr,description,description_fr,points,category,answer,hints,difficulty,phase_number,is_active) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?) ON CONFLICT(id) DO UPDATE SET title=excluded.title,title_fr=excluded.title_fr,description=excluded.description,description_fr=excluded.description_fr,points=excluded.points,category=excluded.category,answer=excluded.answer,hints=excluded.hints,difficulty=excluded.difficulty,phase_number=excluded.phase_number,is_active=excluded.is_active',
+      [cid++, 'practical', q.t, q.tf, q.d, q.d, q.p, 'Technical Analysis', q.a, defaultHints, 'hard', 2, 1]);
   }
   console.log(`  Inserted ${techEasy.length + techMedium.length + techHard.length} Technical challenges (EN/FR)`);
 
   // Phase 3: Incident Response
   console.log('Creating Phase 3: Incident Response...');
   const c = irChallenge;
-  await run('INSERT INTO challenges (id,type,title,title_fr,description,description_fr,points,category,answer,hints,difficulty,phase_number,is_active) VALUES (?,?,?,?,?,?,?,?,?,?,?,3,1)',
-    [c.id, c.type, c.title, c.title_fr, c.description, c.description_fr, c.points, c.category, c.answer, c.hints, c.difficulty]);
+  await run('INSERT INTO challenges (id,type,title,title_fr,description,description_fr,points,category,answer,hints,difficulty,phase_number,is_active) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?) ON CONFLICT(id) DO UPDATE SET title=excluded.title,title_fr=excluded.title_fr,description=excluded.description,description_fr=excluded.description_fr,points=excluded.points,category=excluded.category,answer=excluded.answer,hints=excluded.hints,difficulty=excluded.difficulty,phase_number=excluded.phase_number,is_active=excluded.is_active',
+    [c.id, c.type, c.title, c.title_fr, c.description, c.description_fr, c.points, c.category, c.answer, c.hints, c.difficulty, 3, 1]);
   console.log('  41. ' + c.title + ' / ' + c.title_fr);
 
   await run('DELETE FROM phases WHERE challenge_id = 41');
