@@ -8,11 +8,17 @@ const router = express.Router();
 router.get('/competition-status', auth, isJudge, async (req, res) => {
   try {
     const activePhase = await get("SELECT * FROM competition_phases WHERE is_active = 1 ORDER BY phase_number LIMIT 1");
+    const allPhases = await all("SELECT * FROM competition_phases ORDER BY phase_number", []);
     const settings = await get("SELECT * FROM competition_settings LIMIT 1");
     res.json({
       is_active: !!activePhase,
       current_phase: activePhase ? activePhase.phase_number : null,
       phase_name: activePhase ? activePhase.phase_name : null,
+      phases: allPhases.map(p => ({
+        number: p.phase_number,
+        name: p.phase_name,
+        active: p.is_active === 1
+      })),
       start_time: settings ? settings.start_time : null,
       end_time: settings ? settings.end_time : null
     });
@@ -30,16 +36,31 @@ router.post('/competition-control', auth, isJudge, async (req, res) => {
     if (action === 'start') {
       await run("UPDATE competition_phases SET is_active = 0", []);
       await run("UPDATE competition_phases SET is_active = 1 WHERE phase_number = 1", []);
+    } else if (action === 'next_phase') {
+      const currentActive = await get("SELECT * FROM competition_phases WHERE is_active = 1 ORDER BY phase_number LIMIT 1");
+      if (currentActive) {
+        await run("UPDATE competition_phases SET is_active = 0 WHERE phase_number = ?", [currentActive.phase_number]);
+        const nextPhase = currentActive.phase_number + 1;
+        await run("UPDATE competition_phases SET is_active = 1 WHERE phase_number = ?", [nextPhase]);
+      } else {
+        await run("UPDATE competition_phases SET is_active = 1 WHERE phase_number = 1", []);
+      }
     } else if (action === 'stop') {
       await run("UPDATE competition_phases SET is_active = 0", []);
     }
 
     const activePhase = await get("SELECT * FROM competition_phases WHERE is_active = 1 ORDER BY phase_number LIMIT 1");
+    const allPhases = await all("SELECT * FROM competition_phases ORDER BY phase_number", []);
     res.json({
       success: true,
       is_active: !!activePhase,
       current_phase: activePhase ? activePhase.phase_number : null,
-      phase_name: activePhase ? activePhase.phase_name : null
+      phase_name: activePhase ? activePhase.phase_name : null,
+      phases: allPhases.map(p => ({
+        number: p.phase_number,
+        name: p.phase_name,
+        active: p.is_active === 1
+      }))
     });
   } catch (error) {
     console.error(error);

@@ -1,196 +1,143 @@
 import { useState, useEffect } from 'react';
-import { Power, Clock, Calendar, Save, AlertCircle, Loader } from 'lucide-react';
+import { Power, Clock, SkipForward, Loader, CheckCircle } from 'lucide-react';
 import api from '../services/api';
 
 export default function CompetitionControlPanel() {
   const [isActive, setIsActive] = useState(false);
-  const [phaseName, setPhaseName] = useState('');
+  const [currentPhase, setCurrentPhase] = useState(null);
+  const [phases, setPhases] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [toggling, setToggling] = useState(false);
-  const [startTime, setStartTime] = useState('');
-  const [endTime, setEndTime] = useState('');
-  const [saving, setSaving] = useState(false);
+  const [processing, setProcessing] = useState(false);
   const [message, setMessage] = useState('');
 
-  useEffect(() => {
-    loadStatus();
-  }, []);
+  useEffect(() => { loadStatus(); }, []);
 
   const loadStatus = async () => {
     try {
       const res = await api.get('/judge/competition-status');
       setIsActive(res.data.is_active);
-      setPhaseName(res.data.phase_name || '');
-    } catch (error) {
-      console.error('Failed to load competition status');
+      setCurrentPhase(res.data.current_phase);
+      setPhases(res.data.phases || []);
+    } catch (e) {
+      console.error('Failed to load status');
     } finally {
       setLoading(false);
     }
   };
 
-  const toggleCompetition = async () => {
-    setToggling(true);
+  const doAction = async (action) => {
+    setProcessing(true);
     setMessage('');
     try {
-      const action = isActive ? 'stop' : 'start';
       const res = await api.post('/judge/competition-control', { action });
       setIsActive(res.data.is_active);
-      setPhaseName(res.data.phase_name || '');
-      setMessage(isActive ? 'Competition stopped' : 'Competition started!');
+      setCurrentPhase(res.data.current_phase);
+      setPhases(res.data.phases || []);
+      if (action === 'start') setMessage('Competition started! Phase 1 active');
+      else if (action === 'next_phase') setMessage('Advanced to next phase');
+      else if (action === 'stop') setMessage('Competition stopped');
       setTimeout(() => setMessage(''), 3000);
-    } catch (error) {
-      setMessage('Failed to toggle competition');
+    } catch (e) {
+      setMessage('Failed');
     } finally {
-      setToggling(false);
+      setProcessing(false);
     }
+  };
+
+  if (loading) {
+    return <div className="flex items-center gap-3 p-4"><Loader className="w-5 h-5 animate-spin" /> Loading...</div>;
+  }
+
+  const phaseNames = {
+    1: 'Phase 1: Multiple Choice',
+    2: 'Phase 2: Technical/Practical',
+    3: 'Phase 3: Incident Response',
   };
 
   return (
     <div className="space-y-6">
-      {/* Competition Status */}
+      {/* Competition Status + Phase Switcher */}
       <div className="card">
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h3 className="text-xl font-semibold">Competition Status</h3>
-            <p className="text-sm text-gray-600 mt-1">Control the competition state</p>
+            <h3 className="text-xl font-semibold">Competition Control</h3>
+            <p className="text-sm text-gray-600 mt-1">Manage competition phases</p>
           </div>
           <div className={`px-4 py-2 rounded-full font-semibold ${
-            isActive
-              ? 'bg-green-100 text-green-800'
-              : 'bg-red-100 text-red-800'
+            isActive ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
           }`}>
-            {isActive ? '🟢 ACTIVE' : '🔴 INACTIVE'}
+            {isActive ? '🟢 ACTIVE' : '🔴 STOPPED'}
           </div>
         </div>
 
-        <div className="flex items-center gap-4 p-6 bg-gray-50 rounded-lg">
-          {loading ? (
-            <div className="flex items-center gap-3"><Loader className="w-5 h-5 animate-spin" /> Loading...</div>
+        {/* Phase Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+          {[1, 2, 3].map(num => {
+            const phase = phases.find(p => p.number === num);
+            const isActivePhase = phase?.active;
+            return (
+              <div key={num} className={`p-4 rounded-lg border-2 transition-colors ${
+                isActivePhase
+                  ? 'border-green-500 bg-green-50'
+                  : 'border-gray-200 bg-gray-50'
+              }`}>
+                <div className="flex items-center justify-between mb-2">
+                  <span className="font-semibold text-gray-900">Phase {num}</span>
+                  {isActivePhase && <CheckCircle className="w-5 h-5 text-green-600" />}
+                </div>
+                <p className="text-sm text-gray-600 mb-3">{phaseNames[num]}</p>
+                <div className={`text-xs font-medium px-2 py-1 rounded-full inline-block ${
+                  isActivePhase
+                    ? 'bg-green-200 text-green-800'
+                    : 'bg-gray-300 text-gray-600'
+                }`}>
+                  {isActivePhase ? 'Active' : 'Inactive'}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Control Buttons */}
+        <div className="flex flex-wrap gap-3 p-4 bg-gray-50 rounded-lg">
+          {!isActive ? (
+            <button
+              onClick={() => doAction('start')}
+              disabled={processing}
+              className="btn btn-primary flex items-center gap-2"
+            >
+              <Power className="w-5 h-5" />
+              {processing ? 'Processing...' : 'Start Competition (Phase 1)'}
+            </button>
           ) : (
             <>
-          <Power className={`w-8 h-8 ${isActive ? 'text-green-600' : 'text-red-600'}`} />
-          <div className="flex-1">
-            <p className="font-semibold text-gray-900">
-              {isActive ? 'Competition is Running' : 'Competition is Stopped'}
-            </p>
-            <p className="text-sm text-gray-600">
-              {isActive
-                ? 'Players can submit answers and view challenges'
-                : 'Players cannot access challenges or submit answers'}
-            </p>
-            {phaseName && <p className="text-xs text-blue-600 mt-1">Current Phase: {phaseName}</p>}
-          </div>
-          <button
-            onClick={toggleCompetition}
-            disabled={toggling}
-            className={`btn ${isActive ? 'btn-secondary' : 'btn-primary'} flex items-center gap-2`}
-          >
-            <Power className="w-5 h-5" />
-            {toggling ? 'Processing...' : isActive ? 'Stop Competition' : 'Start Competition'}
-          </button>
+              {currentPhase && currentPhase < 3 && (
+                <button
+                  onClick={() => doAction('next_phase')}
+                  disabled={processing}
+                  className="btn btn-primary flex items-center gap-2"
+                >
+                  <SkipForward className="w-5 h-5" />
+                  {processing ? 'Processing...' : `Next Phase (Phase ${currentPhase + 1})`}
+                </button>
+              )}
+              <button
+                onClick={() => doAction('stop')}
+                disabled={processing}
+                className="btn btn-secondary flex items-center gap-2"
+              >
+                <Power className="w-5 h-5" />
+                Stop Competition
+              </button>
             </>
           )}
         </div>
+
         {message && (
-          <div className={`mt-2 p-2 text-sm rounded-lg ${
-            message.includes('successfully') || message.includes('started') || message.includes('stopped')
-              ? 'bg-green-50 text-green-800'
-              : 'bg-red-50 text-red-800'
-          }`}>
+          <div className="mt-3 p-2 text-sm bg-green-50 text-green-800 rounded-lg">
             {message}
           </div>
         )}
-      </div>
-
-      {/* Time Settings */}
-      <div className="card">
-        <div className="flex items-center gap-3 mb-6">
-          <Clock className="w-6 h-6 text-blue-600" />
-          <div>
-            <h3 className="text-xl font-semibold">Time Configuration</h3>
-            <p className="text-sm text-gray-600">Set competition start and end times</p>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              <Calendar className="w-4 h-4 inline mr-2" />
-              Start Time
-            </label>
-            <input
-              type="datetime-local"
-              value={startTime}
-              onChange={(e) => setStartTime(e.target.value)}
-              className="input"
-            />
-            <p className="text-xs text-gray-500 mt-1">
-              Current: {new Date(startTime).toLocaleString('en-US')}
-            </p>
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              <Calendar className="w-4 h-4 inline mr-2" />
-              End Time
-            </label>
-            <input
-              type="datetime-local"
-              value={endTime}
-              onChange={(e) => setEndTime(e.target.value)}
-              className="input"
-            />
-            <p className="text-xs text-gray-500 mt-1">
-              Current: {new Date(endTime).toLocaleString('en-US')}
-            </p>
-          </div>
-        </div>
-
-        <div className="mt-6 flex items-center justify-between p-4 bg-blue-50 rounded-lg">
-          <div className="flex items-center gap-3">
-            <AlertCircle className="w-5 h-5 text-blue-600" />
-            <p className="text-sm text-blue-800">
-              Duration: {Math.round((new Date(endTime) - new Date(startTime)) / (1000 * 60 * 60 * 24))} days
-            </p>
-          </div>
-          <button
-            onClick={handleSave}
-            disabled={saving}
-            className="btn btn-primary flex items-center gap-2"
-          >
-            <Save className="w-5 h-5" />
-            {saving ? 'Saving...' : 'Save Settings'}
-          </button>
-        </div>
-
-        {message && (
-          <div className={`mt-4 p-3 rounded-lg ${
-            message.includes('success')
-              ? 'bg-green-50 text-green-800'
-              : 'bg-red-50 text-red-800'
-          }`}>
-            {message}
-          </div>
-        )}
-      </div>
-
-      {/* Quick Actions */}
-      <div className="card">
-        <h3 className="text-lg font-semibold mb-4">Quick Actions</h3>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <button className="p-4 border-2 border-gray-200 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-colors">
-            <p className="font-semibold text-gray-900">Reset All Progress</p>
-            <p className="text-sm text-gray-600 mt-1">Clear all submissions</p>
-          </button>
-          <button className="p-4 border-2 border-gray-200 rounded-lg hover:border-purple-500 hover:bg-purple-50 transition-colors">
-            <p className="font-semibold text-gray-900">Export Results</p>
-            <p className="text-sm text-gray-600 mt-1">Download CSV report</p>
-          </button>
-          <button className="p-4 border-2 border-gray-200 rounded-lg hover:border-green-500 hover:bg-green-50 transition-colors">
-            <p className="font-semibold text-gray-900">Backup Database</p>
-            <p className="text-sm text-gray-600 mt-1">Create backup file</p>
-          </button>
-        </div>
       </div>
     </div>
   );
