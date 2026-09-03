@@ -3,9 +3,11 @@ import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Send, Lightbulb, CheckCircle, XCircle, Timer, SkipForward, AlertTriangle, Terminal as TerminalIcon } from 'lucide-react';
 import { poolAPI, submissionAPI } from '../services/api';
 import TerminalEmulator from '../components/TerminalEmulator';
+import useLang from '../useLang';
 
 export default function ChallengePage() {
   const navigate = useNavigate();
+  const { _t, lang } = useLang();
   const [assignment, setAssignment] = useState(null);
   const [answer, setAnswer] = useState('');
   const [showHints, setShowHints] = useState(false);
@@ -33,124 +35,74 @@ export default function ChallengePage() {
       if (data.assignment) {
         setAssignment(data.assignment);
         setTimeLeft(data.assignment.time_remaining);
+        setSkipsRemaining(data.assignment.skips_remaining || 3);
+        startTimer(data.assignment.time_remaining);
       } else {
         setAssignment(null);
-        setTimeLeft(null);
+        navigate('/challenges');
       }
-
-      const skipRes = await poolAPI.getSkipStatus();
-      setSkipsRemaining(skipRes.data.skips_remaining);
     } catch (error) {
       console.error('Failed to load question:', error);
+      navigate('/challenges');
     } finally {
       setLoading(false);
     }
   };
 
-  useEffect(() => {
-    loadNextQuestion();
-    return () => {
-      if (timerRef.current) clearInterval(timerRef.current);
-    };
-  }, []);
-
-  useEffect(() => {
-    if (timeLeft === null || timeLeft <= 0) return;
-
+  const startTimer = (seconds) => {
+    if (timerRef.current) clearInterval(timerRef.current);
+    setTimeLeft(seconds);
     timerRef.current = setInterval(() => {
       setTimeLeft(prev => {
         if (prev <= 1) {
           clearInterval(timerRef.current);
-          handleTimeout();
+          setIsTimeout(true);
           return 0;
         }
         return prev - 1;
       });
     }, 1000);
-
-    return () => {
-      if (timerRef.current) clearInterval(timerRef.current);
-    };
-  }, [timeLeft !== null]);
-
-  const handleTimeout = () => {
-    setIsTimeout(true);
-    setResult({
-      is_correct: false,
-      message: '⏰ Time is up! Question returned to pool.',
-      type: 'timeout'
-    });
   };
 
-  const formatTime = (seconds) => {
-    const m = Math.floor(seconds / 60);
-    const s = seconds % 60;
-    return `${m}:${s.toString().padStart(2, '0')}`;
-  };
-
-  const getTimerColor = () => {
-    if (!timeLeft || timeLeft > 120) return 'text-green-600';
-    if (timeLeft > 60) return 'text-yellow-600';
-    return 'text-red-600 animate-pulse';
-  };
+  useEffect(() => {
+    loadNextQuestion();
+    return () => { if (timerRef.current) clearInterval(timerRef.current); };
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!answer.trim() || !assignment) return;
-
+    if (!answer.trim() || submitting) return;
     setSubmitting(true);
-    setResult(null);
-
     try {
-      const response = await submissionAPI.submit({
-        challenge_id: assignment.challenge_id,
-        answer: answer.trim()
-      });
-
-      setResult({ ...response.data, type: response.data.is_correct ? 'correct' : 'incorrect' });
-
-      if (response.data.is_correct) {
-        setTimeout(() => {
-          loadNextQuestion();
-        }, 3000);
+      const response = await submissionAPI.submit({ challenge_id: assignment.challenge_id, answer: answer.trim() });
+      const data = response.data;
+      setResult(data);
+      if (data.is_correct && timerRef.current) clearInterval(timerRef.current);
+      if (data.is_correct) {
+        setTimeout(() => loadNextQuestion(), 3000);
       }
     } catch (error) {
-      setResult({
-        is_correct: false,
-        message: error.response?.data?.error || 'Submission failed. Please try again.',
-        type: 'error'
-      });
+      console.error('Failed to submit:', error);
     } finally {
       setSubmitting(false);
     }
   };
 
   const handleSkip = async () => {
-    if (!assignment || skipsRemaining <= 0) return;
-
     try {
-      const response = await poolAPI.skip(assignment.challenge_id);
-      setSkipsRemaining(response.data.skips_remaining);
-      loadNextQuestion();
+      await poolAPI.skip(assignment.challenge_id);
+      setSkipsRemaining(prev => prev - 1);
+      setResult({ skipped: true, message: 'Skipped', is_correct: false });
+      if (timerRef.current) clearInterval(timerRef.current);
+      setTimeout(() => loadNextQuestion(), 1500);
     } catch (error) {
-      setResult({
-        is_correct: false,
-        message: error.response?.data?.error || 'Skip failed',
-        type: 'error'
-      });
+      console.error('Failed to skip:', error);
     }
   };
 
   const getAttemptLabel = () => {
-    if (!assignment) return '';
-    const a = assignment.attempt_number;
-    if (a === 1) return 'First attempt (full score)';
-    if (a === 2) {
-      if (assignment.type === 'multiple_choice') return '2nd attempt (60% scoring)';
-      if (assignment.type === 'practical') return '2nd attempt (60% scoring)';
-      if (assignment.type === 'incident_response') return '2nd attempt (70% scoring)';
-    }
-    return `${a}th attempt`;
+    const remaining = 2 - (assignment.attempt_number - 1);
+    return `Attempt ${assignment.attempt_number} of 2 (${remaining} attempt${remaining > 1 ? 's' : ''} remaining)`;
   };
 
   if (loading) {
@@ -158,7 +110,7 @@ export default function ChallengePage() {
       <div className="flex items-center justify-center h-64">
         <div className="text-center">
           <div className="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-          <p className="text-gray-500">Loading question...</p>
+          <p className="text-gray-500">{_t('challenges.loading')}</p>
         </div>
       </div>
     );
@@ -166,40 +118,37 @@ export default function ChallengePage() {
 
   if (!assignment) {
     return (
-      <div className="max-w-4xl mx-auto">
-        <div className="card text-center py-16">
-          <CheckCircle className="w-20 h-20 text-green-500 mx-auto mb-4" />
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">No Questions Available</h2>
-          <p className="text-gray-500 mb-6">
-            All questions in the pool have been completed or are being answered by teammates.
-          </p>
-          <button onClick={loadNextQuestion} className="btn btn-primary">Refresh</button>
-        </div>
+      <div className="text-center py-12">
+        <CheckCircle className="w-16 h-16 text-green-500 mx-auto mb-4" />
+        <h2 className="text-2xl font-bold text-gray-900 mb-2">{_t('challengePlay.completed')}</h2>
+        <p className="text-gray-600 mb-6">{_t('challengePlay.phaseCompleted')}</p>
+        <button onClick={() => navigate('/challenges')} className="btn btn-primary">
+          {_t('challenges.title')}
+        </button>
       </div>
     );
   }
 
   return (
-    <div className="max-w-4xl mx-auto space-y-6">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-4">
-          <div className="text-sm text-gray-500">
-            Phase {assignment.phase_number} &middot; {assignment.phase_name}
+    <div className="space-y-6">
+      <button onClick={() => navigate('/challenges')} className="btn btn-secondary flex items-center gap-2">
+        <ArrowLeft className="w-4 h-4" /> {_t('challenges.title')}
+      </button>
+
+      {/* Timer */}
+      {timeLeft !== null && !result && !isTimeout && (
+        <div className={`card ${timeLeft < 30 ? 'bg-red-50 border-red-200' : ''}`}>
+          <div className="flex items-center gap-3">
+            <Timer className={`w-6 h-6 ${timeLeft < 30 ? 'text-red-600 animate-pulse' : 'text-gray-600'}`} />
+            <div className="flex-1">
+              <div className="text-sm text-gray-600">{_t('challengePlay.timeRemaining')}</div>
+              <div className={`text-2xl font-bold font-mono ${timeLeft < 30 ? 'text-red-600' : 'text-gray-900'}`}>
+                {Math.floor(timeLeft / 60)}:{(timeLeft % 60).toString().padStart(2, '0')}
+              </div>
+            </div>
           </div>
         </div>
-        <div className="flex items-center gap-6">
-          <div className="flex items-center gap-2 text-sm">
-            <SkipForward className="w-4 h-4 text-gray-500" />
-            <span className={skipsRemaining > 0 ? 'text-gray-700' : 'text-red-600 font-semibold'}>
-              Skips: {skipsRemaining}/3
-            </span>
-          </div>
-          <div className={`flex items-center gap-2 font-bold text-lg ${getTimerColor()}`}>
-            <Timer className="w-5 h-5" />
-            {formatTime(timeLeft || 0)}
-          </div>
-        </div>
-      </div>
+      )}
 
       <div className="card">
         <div className="flex items-start justify-between mb-6">
@@ -215,14 +164,14 @@ export default function ChallengePage() {
                 'bg-red-100 text-red-800'
               }`}>{assignment.difficulty}</span>
               <span className="badge bg-purple-50 text-purple-800">
-                {assignment.type === 'multiple_choice' ? 'Multiple Choice' :
-                 assignment.type === 'practical' ? 'Practical' : 'Incident Response'}
+                {assignment.type === 'multiple_choice' ? _t('challengePlay.multipleChoice') :
+                 assignment.type === 'practical' ? _t('challengePlay.practical') : _t('challengePlay.incidentResponse')}
               </span>
             </div>
           </div>
           <div className="text-right">
             <div className="text-3xl font-bold text-blue-600">{assignment.points}</div>
-            <div className="text-sm text-gray-500">pts</div>
+            <div className="text-sm text-gray-500">{_t('challengePlay.pts')}</div>
           </div>
         </div>
 
@@ -271,14 +220,14 @@ export default function ChallengePage() {
         {assignment.type !== 'multiple_choice' && !isTimeout && (
           <div className="mb-6">
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Your Answer
+              {_t('challengePlay.yourAnswer')}
             </label>
             <textarea
               className="input w-full"
               rows="3"
               value={answer}
               onChange={(e) => setAnswer(e.target.value)}
-              placeholder="Enter your answer..."
+              placeholder={_t('challengePlay.enterAnswer')}
               disabled={submitting || isTimeout}
             />
           </div>
@@ -291,7 +240,7 @@ export default function ChallengePage() {
               className="flex items-center gap-2 text-blue-600 hover:text-blue-700 font-medium"
             >
               <Lightbulb className="w-5 h-5" />
-              {showHints ? 'Hide Hints' : 'Show Hints'}
+              {showHints ? _t('challengePlay.hideHints') : _t('challengePlay.hints')}
             </button>
             {showHints && (
               <div className="mt-3 bg-yellow-50 border border-yellow-200 rounded-lg p-4">
@@ -312,9 +261,9 @@ export default function ChallengePage() {
               className="flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors"
             >
               <TerminalIcon className="w-5 h-5" />
-              Open Linux Terminal
+              {_t('challengePlay.openTerminal')}
             </button>
-            <p className="text-sm text-gray-500 mt-2">Use terminal commands to investigate, then submit your answer</p>
+            <p className="text-sm text-gray-500 mt-2">{_t('challengePlay.terminalHint')}</p>
           </div>
         )}
 
@@ -328,7 +277,7 @@ export default function ChallengePage() {
                     rows="3"
                     value={answer}
                     onChange={(e) => setAnswer(e.target.value)}
-                    placeholder="Enter your answer..."
+                    placeholder={_t('challengePlay.enterAnswer')}
                     disabled={submitting}
                   />
                 </div>
@@ -339,7 +288,7 @@ export default function ChallengePage() {
                 className="btn btn-primary flex items-center gap-2"
               >
                 <Send className="w-5 h-5" />
-                {submitting ? 'Submitting...' : 'Submit Answer'}
+                {submitting ? _t('challengePlay.submitting') : _t('challengePlay.submit')}
               </button>
             </form>
 
@@ -348,10 +297,10 @@ export default function ChallengePage() {
                 onClick={handleSkip}
                 disabled={submitting}
                 className="btn btn-secondary flex items-center gap-2"
-                title={`${skipsRemaining} skips remaining`}
+                title={`${skipsRemaining} ${_t('challengePlay.skipsRemaining')}`}
               >
                 <SkipForward className="w-5 h-5" />
-                Skip
+                {_t('challengePlay.skip')}
               </button>
             )}
           </div>
@@ -360,8 +309,8 @@ export default function ChallengePage() {
         {isTimeout && (
           <div className="text-center py-6">
             <Timer className="w-16 h-16 text-red-400 mx-auto mb-3" />
-            <p className="text-gray-600 mb-4">Time is up! Question returned to pool.</p>
-            <button onClick={loadNextQuestion} className="btn btn-primary">Get Next Question</button>
+            <p className="text-gray-600 mb-4">{_t('challengePlay.timeUp')}</p>
+            <button onClick={loadNextQuestion} className="btn btn-primary">{_t('challengePlay.getNext')}</button>
           </div>
         )}
 
@@ -383,31 +332,32 @@ export default function ChallengePage() {
               {result.points_earned !== undefined && (
                 <p className="text-sm mt-1">
                   {result.is_correct
-                    ? `Earned ${result.points_earned} pts`
-                    : `Score: ${result.points_earned > 0 ? '+' : ''}${result.points_earned}`
+                    ? `${_t('challengePlay.earned')} ${result.points_earned} ${_t('challengePlay.pts')}`
+                    : `${_t('challengePlay.score')}: ${result.points_earned > 0 ? '+' : ''}${result.points_earned}`
                   }
-                  {result.attempt_number > 1 && ` (Attempt ${result.attempt_number})`}
+                  {result.attempt_number > 1 && ` (${_t('challengePlay.attempts')} ${result.attempt_number})`}
                 </p>
               )}
               {result.team_total_points !== undefined && (
                 <p className="text-sm mt-1 text-blue-600">
-                  Team Total: {result.team_total_points} pts
+                  {_t('challengePlay.teamTotal')}: {result.team_total_points} {_t('challengePlay.pts')}
                 </p>
               )}
               {result.is_correct && (
-                <p className="text-xs text-gray-500 mt-1">Loading next question in 3 seconds...</p>
+                <p className="text-xs text-gray-500 mt-1">{_t('challengePlay.loadingNext')}</p>
+              )}
+              {result.attempts_remaining === 0 && !result.is_correct && (
+                <p className="text-xs mt-1">{_t('challengePlay.getNext')}</p>
               )}
             </div>
           </div>
         )}
-
-        {showTerminal && (
-          <TerminalEmulator
-            onClose={() => setShowTerminal(false)}
-            challengeId={assignment.challenge_id}
-          />
-        )}
       </div>
+
+      {/* Terminal Modal */}
+      {showTerminal && (
+        <TerminalEmulator onClose={() => setShowTerminal(false)} />
+      )}
     </div>
   );
 }

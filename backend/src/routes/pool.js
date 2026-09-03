@@ -6,6 +6,11 @@ const router = express.Router();
 
 const MAX_SKIPS_PER_PHASE = 3;
 const QUESTION_TIME_LIMIT_SECONDS = 180;
+const MAX_QUESTIONS_PER_USER_PER_PHASE = {
+  1: 5,  // Phase 1: max 5 MC questions per player
+  2: 5,  // Phase 2: max 5 practical per player
+  // Phase 3: no limit (team IR)
+};
 
 // Helper: apply language to challenge data
 function applyLang(challenge, lang) {
@@ -48,6 +53,26 @@ router.get('/next', auth, async (req, res) => {
     }
 
     const phaseNumber = activePhase.phase_number;
+
+    // Check max questions per user per phase
+    const maxQ = MAX_QUESTIONS_PER_USER_PER_PHASE[phaseNumber];
+    if (maxQ) {
+      const solvedCount = await get(
+        `SELECT COUNT(*) as count FROM submissions
+         WHERE user_id = ? AND phase_number = ? AND is_correct = 1`,
+        [userId, phaseNumber]
+      );
+      if (solvedCount.count >= maxQ) {
+        return res.json({
+          assignment: null,
+          message: 'You have completed the maximum number of questions for this phase',
+          phase_number: phaseNumber,
+          phase_name: activePhase.phase_name,
+          max_questions: maxQ,
+          completed: true
+        });
+      }
+    }
 
     const skipCount = await get(
       `SELECT COUNT(*) as count FROM submissions
