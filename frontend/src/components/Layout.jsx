@@ -2,15 +2,11 @@ import { Outlet, Link, useLocation } from 'react-router-dom';
 import { Home, Trophy, FileText, Settings, LogOut, Play, Users, Globe } from 'lucide-react';
 import CompetitionTimer from './CompetitionTimer';
 import anssiLogo from '../assets/anssi-logo.png';
+import useLang from '../useLang';
 
 export default function Layout({ user, onLogout }) {
-  const currentLang = localStorage.getItem('lang') || 'en';
+  const { _t, lang, toggleLang } = useLang();
 
-  const toggleLang = () => {
-    const newLang = currentLang === 'en' ? 'fr' : 'en';
-    localStorage.setItem('lang', newLang);
-    window.location.reload();
-  };
   const location = useLocation();
 
   const isActive = (path) => {
@@ -21,15 +17,15 @@ export default function Layout({ user, onLogout }) {
 
   if (user.role === 'judge') {
     navItems.push(
-      { path: '/judge', icon: Settings, label: 'Admin Panel' },
-      { path: '/leaderboard', icon: Trophy, label: 'Leaderboard' },
-      { path: '/challenges', icon: FileText, label: 'Challenges' }
+      { path: '/judge', icon: Settings, label: _t('layout.adminPanel') },
+      { path: '/leaderboard', icon: Trophy, label: _t('layout.leaderboard') },
+      { path: '/challenges', icon: FileText, label: _t('layout.challenges') }
     );
   } else {
     navItems.push(
-      { path: '/', icon: Home, label: 'Home' },
-      { path: '/challenges', icon: Play, label: 'Play' },
-      { path: '/leaderboard', icon: Trophy, label: 'Leaderboard' }
+      { path: '/', icon: Home, label: _t('layout.home') },
+      { path: '/challenges', icon: Play, label: _t('layout.play') },
+      { path: '/leaderboard', icon: Trophy, label: _t('layout.leaderboard') }
     );
   }
 
@@ -59,10 +55,10 @@ export default function Layout({ user, onLogout }) {
               </div>
               <button onClick={toggleLang} className="btn btn-secondary flex items-center gap-1 text-xs px-2 py-1">
                 <Globe className="w-4 h-4" />
-                {currentLang === 'en' ? 'FR' : 'EN'}
+                {lang === 'en' ? 'FR' : 'EN'}
               </button>
               <button onClick={onLogout} className="btn btn-secondary flex items-center gap-2">
-                <LogOut className="w-4 h-4" /> Logout
+                <LogOut className="w-4 h-4" /> {_t('layout.logout')}
               </button>
             </div>
           </div>

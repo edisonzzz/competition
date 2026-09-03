@@ -2,8 +2,10 @@ import { useState } from 'react';
 import { LogIn, UserPlus, Shield, Lock, User } from 'lucide-react';
 import { authAPI } from '../services/api';
 import anssiLogo from '../assets/anssi-logo.png';
+import useLang from '../useLang';
 
 export default function LoginPage({ onLogin }) {
+  const { _t, lang, toggleLang } = useLang();
   const [isRegister, setIsRegister] = useState(false);
   const [formData, setFormData] = useState({ username: '', password: '', team_name: '' });
   const [error, setError] = useState('');
@@ -48,15 +50,23 @@ export default function LoginPage({ onLogin }) {
             </div>
             <div className="flex items-center justify-center gap-2 text-orange-600">
               <Shield className="w-5 h-5" />
-              <p className="text-lg font-semibold">Côte d'Ivoire Cybersecurity Competition</p>
+              <p className="text-lg font-semibold">{lang === 'fr' ? 'Compétition de Cybersécurité' : 'Cybersecurity Competition'}</p>
             </div>
             <p className="text-gray-500 text-xs mt-1">
-              Agence Nationale de la Sécurité des Systèmes d'Information
+              {lang === 'fr' ? 'Agence Nationale de la Sécurité des Systèmes d\'Information' : 'Agence Nationale de la Sécurité des Systèmes d\'Information'}
             </p>
           </div>
 
+          {/* Language toggle */}
+          <div className="px-8 pt-4 flex justify-end">
+            <button onClick={toggleLang} className="text-xs text-blue-600 hover:text-blue-800 flex items-center gap-1">
+              <Shield className="w-3 h-3" />
+              {lang === 'en' ? 'Français' : 'English'}
+            </button>
+          </div>
+
           {/* Tab switcher */}
-          <div className="px-8 pt-4">
+          <div className="px-8 pt-2">
             <div className="flex gap-2 p-1 bg-gray-100 rounded-lg">
               <button
                 onClick={() => setIsRegister(false)}
@@ -64,7 +74,7 @@ export default function LoginPage({ onLogin }) {
                   !isRegister ? 'bg-white text-blue-600 shadow-md' : 'text-gray-600 hover:text-gray-900'
                 }`}
               >
-                Login
+                {_t('login.signIn')}
               </button>
               <button
                 onClick={() => setIsRegister(true)}
@@ -72,7 +82,7 @@ export default function LoginPage({ onLogin }) {
                   isRegister ? 'bg-white text-blue-600 shadow-md' : 'text-gray-600 hover:text-gray-900'
                 }`}
               >
-                Register
+                {_t('login.register')}
               </button>
             </div>
           </div>
@@ -80,27 +90,27 @@ export default function LoginPage({ onLogin }) {
           {/* Form */}
           <form onSubmit={handleSubmit} className="px-8 pb-8 pt-4 space-y-4">
             <div className="space-y-1">
-              <label className="block text-sm font-semibold text-gray-700">Username</label>
+              <label className="block text-sm font-semibold text-gray-700">{_t('login.username')}</label>
               <div className="relative">
                 <User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                <input type="text" className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all" value={formData.username} onChange={(e) => setFormData({ ...formData, username: e.target.value })} placeholder="Enter username" required />
+                <input type="text" className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all" value={formData.username} onChange={(e) => setFormData({ ...formData, username: e.target.value })} placeholder={_t('login.username')} required />
               </div>
             </div>
 
             <div className="space-y-1">
-              <label className="block text-sm font-semibold text-gray-700">Password</label>
+              <label className="block text-sm font-semibold text-gray-700">{_t('login.password')}</label>
               <div className="relative">
                 <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                <input type="password" className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all" value={formData.password} onChange={(e) => setFormData({ ...formData, password: e.target.value })} placeholder="Enter password" required />
+                <input type="password" className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all" value={formData.password} onChange={(e) => setFormData({ ...formData, password: e.target.value })} placeholder={_t('login.password')} required />
               </div>
             </div>
 
             {isRegister && (
               <div className="space-y-1 animate-fade-in">
-                <label className="block text-sm font-semibold text-gray-700">Team Name</label>
+                <label className="block text-sm font-semibold text-gray-700">{_t('login.teamName')}</label>
                 <div className="relative">
                   <Shield className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                  <input type="text" className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all" value={formData.team_name} onChange={(e) => setFormData({ ...formData, team_name: e.target.value })} placeholder="Enter team name" required={isRegister} />
+                  <input type="text" className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all" value={formData.team_name} onChange={(e) => setFormData({ ...formData, team_name: e.target.value })} placeholder={_t('login.teamName')} required={isRegister} />
                 </div>
               </div>
             )}
@@ -113,14 +123,14 @@ export default function LoginPage({ onLogin }) {
               className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3 rounded-lg font-semibold hover:from-blue-700 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transform transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none shadow-lg hover:shadow-xl flex items-center justify-center gap-2">
               {loading ? (
                 <div className="flex items-center gap-2">
-                  <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" /> Processing...
+                  <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" /> {_t('login.processing')}
                 </div>
-              ) : isRegister ? (<><UserPlus className="w-5 h-5" /> Create Account</>) : (<><LogIn className="w-5 h-5" /> Sign In</>)}
+              ) : isRegister ? (<><UserPlus className="w-5 h-5" /> {_t('login.createAccount')}</>) : (<><LogIn className="w-5 h-5" /> {_t('login.signIn')}</>)}
             </button>
           </form>
         </div>
 
-        <p className="text-center text-blue-200 text-sm mt-4">Secure Platform &middot; Real-time Scoring &middot; Professional CTF</p>
+        <p className="text-center text-blue-200 text-sm mt-4">{_t('login.loginSubtitle')}</p>
       </div>
 
       <style jsx>{`

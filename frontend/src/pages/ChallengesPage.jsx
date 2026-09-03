@@ -2,9 +2,11 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Play, Timer, Users, BarChart3, SkipForward, CheckCircle, RefreshCw } from 'lucide-react';
 import { poolAPI, submissionAPI } from '../services/api';
+import useLang from '../useLang';
 
 export default function ChallengesPage({ user }) {
   const navigate = useNavigate();
+  const { _t } = useLang();
   const [assignment, setAssignment] = useState(null);
   const [stats, setStats] = useState({ solved: 0, total: 0, points: 0, teamPoints: 0 });
   const [loading, setLoading] = useState(true);
@@ -64,7 +66,7 @@ export default function ChallengesPage({ user }) {
       <div className="flex items-center justify-center h-64">
         <div className="text-center">
           <div className="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-          <p className="text-gray-500">Loading...</p>
+          <p className="text-gray-500">{_t('challenges.loading')}</p>
         </div>
       </div>
     );
@@ -74,19 +76,19 @@ export default function ChallengesPage({ user }) {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold text-gray-900">Challenge Arena</h2>
-          <p className="text-gray-600 mt-1">Questions are assigned from your team's pool &middot; 3-minute timer per question</p>
+          <h2 className="text-2xl font-bold text-gray-900">{_t('challenges.title')}</h2>
+          <p className="text-gray-600 mt-1">{_t('challenges.subtitle')}</p>
         </div>
         <button onClick={loadData} className="btn btn-secondary flex items-center gap-2">
-          <RefreshCw className="w-4 h-4" /> Refresh
+          <RefreshCw className="w-4 h-4" /> {_t('challenges.refresh')}
         </button>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <StatCard icon={CheckCircle} label="Solved" value={stats.solved} color="green" />
-        <StatCard icon={Timer} label="Time per Q" value="3 min" color="red" />
-        <StatCard icon={SkipForward} label="Skips Left" value={`${skipStatus.skips_remaining}/${skipStatus.skips_max}`} color="yellow" />
-        <StatCard icon={BarChart3} label="Your Points" value={stats.points} color="blue" />
+        <StatCard icon={CheckCircle} label={_t('challenges.solved')} value={stats.solved} color="green" />
+        <StatCard icon={Timer} label={_t('challenges.timePerQ')} value="3 min" color="red" />
+        <StatCard icon={SkipForward} label={_t('challenges.skipsLeft')} value={`${skipStatus.skips_remaining}/${skipStatus.skips_max}`} color="yellow" />
+        <StatCard icon={BarChart3} label={_t('challenges.yourPoints')} value={stats.points} color="blue" />
       </div>
 
       {phaseInfo && (
@@ -96,9 +98,9 @@ export default function ChallengesPage({ user }) {
               <Users className="w-5 h-5" />
             </div>
             <div>
-              <h3 className="font-semibold text-gray-900">Competition Phase</h3>
+              <h3 className="font-semibold text-gray-900">{_t('challenges.competitionPhase')}</h3>
               <p className="text-sm text-gray-600">
-                {phaseInfo.number ? `Phase ${phaseInfo.number}: ${phaseInfo.name}` : phaseInfo.message || 'Waiting for judge to start'}
+                {phaseInfo.number ? `Phase ${phaseInfo.number}: ${phaseInfo.name}` : phaseInfo.message || _t('challenges.noQuestions')}
               </p>
             </div>
           </div>
@@ -106,7 +108,7 @@ export default function ChallengesPage({ user }) {
           <div className="flex gap-3">
             <button onClick={startChallenge} className="btn btn-primary flex items-center gap-2 text-lg px-8 py-4">
               <Play className="w-6 h-6" />
-              {assignment ? 'Start Playing' : 'Get Question'}
+              {assignment ? _t('challenges.startPlaying') : _t('challenges.getQuestion')}
             </button>
           </div>
         </div>
@@ -120,6 +122,7 @@ export default function ChallengesPage({ user }) {
 function SubmissionHistory() {
   const [submissions, setSubmissions] = useState([]);
   const [loading, setLoading] = useState(true);
+  const { _t } = useLang();
 
   useEffect(() => {
     submissionAPI.getHistory()
@@ -132,7 +135,7 @@ function SubmissionHistory() {
 
   return (
     <div className="card">
-      <h3 className="text-lg font-semibold mb-4">Submission History</h3>
+      <h3 className="text-lg font-semibold mb-4">{_t('challenges.submissionHistory')}</h3>
       <div className="space-y-2 max-h-64 overflow-y-auto">
         {submissions.slice(0, 20).map(sub => (
           <div key={sub.id} className="flex items-center justify-between p-2 bg-gray-50 rounded-lg text-sm">
@@ -142,9 +145,9 @@ function SubmissionHistory() {
               }`} />
               <span className="text-gray-700 truncate">{sub.title}</span>
               {sub.skipped ? (
-                <span className="text-xs text-gray-500">(Skipped)</span>
+                <span className="text-xs text-gray-500">({_t('challenges.skipped')})</span>
               ) : (
-                <span className="text-xs text-gray-500">(Attempt {sub.attempt_number})</span>
+                <span className="text-xs text-gray-500">({_t('challengePlay.attempts')} {sub.attempt_number})</span>
               )}
             </div>
             <span className={`font-medium flex-shrink-0 ml-2 ${
