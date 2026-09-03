@@ -55,7 +55,11 @@ export default function ChallengesPage({ user }) {
 
   const startChallenge = () => {
     if (assignment) {
-      navigate('/challenge/play');
+      if (assignment.type === 'incident_response') {
+        navigate(`/incident/${assignment.challenge_id}`);
+      } else {
+        navigate('/challenge/play');
+      }
     } else {
       loadData();
     }

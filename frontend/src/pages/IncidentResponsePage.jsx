@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, CheckCircle, Clock, Terminal as TerminalIcon } from 'lucide-react';
 import api from '../services/api';
-import TerminalEmulator from '../components/TerminalEmulator';
+import TerminalEmbedded from '../components/TerminalEmbedded';
 
 export default function IncidentResponsePage() {
   const { id } = useParams();
@@ -13,7 +13,6 @@ export default function IncidentResponsePage() {
   const [answers, setAnswers] = useState({});
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
-  const [showTerminal, setShowTerminal] = useState(false);
   const [result, setResult] = useState(null);
 
   useEffect(() => {
@@ -206,28 +205,38 @@ export default function IncidentResponsePage() {
           </div>
         </div>
 
-        {/* Middle: Terminal */}
+        {/* Middle: Investigation Terminal */}
         <div className="lg:col-span-6 card">
           <div className="mb-4">
             <h3 className="text-xl font-semibold text-gray-900 mb-2">
               {phase.title}
             </h3>
             <p className="text-gray-600 mb-4">{phase.description}</p>
+          </div>
 
-            {phase.target_objective && (
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
-                <div className="font-semibold text-blue-900 mb-1">🎯 Objective:</div>
-                <div className="text-blue-800 text-sm">{phase.target_objective}</div>
+          {phase.target_objective && (
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
+              <div className="font-semibold text-blue-900 mb-1">🎯 Objective:</div>
+              <div className="text-blue-800 text-sm">{phase.target_objective}</div>
+            </div>
+          )}
+
+          {/* Embedded Terminal */}
+          <div className="bg-gray-900 rounded-lg border border-gray-700 overflow-hidden">
+            <div className="bg-gray-800 px-4 py-2 flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <TerminalIcon className="w-4 h-4 text-green-400" />
+                <span className="text-white text-xs font-mono">admin@blueteam-challenge:~</span>
               </div>
-            )}
-
-            <button
-              onClick={() => setShowTerminal(true)}
-              className="btn btn-primary flex items-center gap-2"
-            >
-              <TerminalIcon className="w-5 h-5" />
-              Open Investigation Terminal
-            </button>
+              <div className="flex gap-1.5">
+                <div className="w-3 h-3 rounded-full bg-red-500" />
+                <div className="w-3 h-3 rounded-full bg-yellow-500" />
+                <div className="w-3 h-3 rounded-full bg-green-500" />
+              </div>
+            </div>
+            <div className="h-64">
+              <TerminalEmbedded onClose={() => {}} compact={true} />
+            </div>
           </div>
         </div>
 
@@ -283,13 +292,6 @@ export default function IncidentResponsePage() {
         </div>
       </div>
 
-      {/* Terminal Modal */}
-      {showTerminal && (
-        <TerminalEmulator
-          onClose={() => setShowTerminal(false)}
-          challengeId={id}
-        />
-      )}
-    </div>
+      </div>
   );
 }

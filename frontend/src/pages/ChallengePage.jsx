@@ -2,7 +2,7 @@ import { useEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Send, Lightbulb, CheckCircle, XCircle, Timer, SkipForward, AlertTriangle, Terminal as TerminalIcon } from 'lucide-react';
 import { poolAPI, submissionAPI } from '../services/api';
-import TerminalEmulator from '../components/TerminalEmulator';
+import TerminalEmbedded from '../components/TerminalEmbedded';
 import useLang from '../useLang';
 
 export default function ChallengePage() {
@@ -16,7 +16,6 @@ export default function ChallengePage() {
   const [loading, setLoading] = useState(true);
   const [timeLeft, setTimeLeft] = useState(null);
   const [skipsRemaining, setSkipsRemaining] = useState(3);
-  const [showTerminal, setShowTerminal] = useState(false);
   const [isTimeout, setIsTimeout] = useState(false);
   const timerRef = useRef(null);
 
@@ -27,7 +26,6 @@ export default function ChallengePage() {
       setAnswer('');
       setShowHints(false);
       setIsTimeout(false);
-      setShowTerminal(false);
 
       const response = await poolAPI.getNext();
       const data = response.data;
@@ -256,14 +254,23 @@ export default function ChallengePage() {
 
         {assignment.type === 'practical' && !isTimeout && (
           <div className="mb-6">
-            <button
-              onClick={() => setShowTerminal(true)}
-              className="flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors"
-            >
-              <TerminalIcon className="w-5 h-5" />
-              {_t('challengePlay.openTerminal')}
-            </button>
-            <p className="text-sm text-gray-500 mt-2">{_t('challengePlay.terminalHint')}</p>
+            <div className="flex items-center gap-2 mb-2">
+              <TerminalIcon className="w-5 h-5 text-green-600" />
+              <span className="text-sm font-medium text-gray-700">{_t('challengePlay.terminal')}</span>
+            </div>
+            <div className="bg-gray-900 rounded-lg border border-gray-700 overflow-hidden" style={{height:'300px'}}>
+              <div className="bg-gray-800 px-3 py-1.5 flex items-center justify-between">
+                <span className="text-white text-xs font-mono">admin@blueteam-challenge:~</span>
+                <div className="flex gap-1.5">
+                  <div className="w-2.5 h-2.5 rounded-full bg-red-500" />
+                  <div className="w-2.5 h-2.5 rounded-full bg-yellow-500" />
+                  <div className="w-2.5 h-2.5 rounded-full bg-green-500" />
+                </div>
+              </div>
+              <div className="h-[calc(300px-32px)]">
+                <TerminalEmbedded compact={true} />
+              </div>
+            </div>
           </div>
         )}
 
@@ -354,10 +361,6 @@ export default function ChallengePage() {
         )}
       </div>
 
-      {/* Terminal Modal */}
-      {showTerminal && (
-        <TerminalEmulator onClose={() => setShowTerminal(false)} />
-      )}
-    </div>
+</div>
   );
 }
